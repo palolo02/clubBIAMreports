@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>BIAM Toastmasters</title>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <!-- <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />-->
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="/static/css/style.css">
+
+        
+    </head>
+    <body>
+        <div>
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <a class="navbar-brand" href="#">Club BIAM</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarColor02">
+                  <ul class="navbar-nav mr-auto">
+                    <li class="nav-item ">
+                      <a class="nav-link" href="/overview">General</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/year">| Anual</a>
+                    </li>
+                    <li class="nav-item active">
+                      <a class="nav-link" href="#">| Mensual</a>
+                  </li>
+                  </ul>
+                </div>
+              </nav>
+        </div>
+        <div class="container">
+          <div id="filters" class="row">
+            <div class="col-6">
+              <label>Año</label>
+              <select>
+                <option>2020</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>Mes</label>
+              <select id="selMes">
+                <option value="2020,04">Abr 2020</option>
+                <option value="2020,05">May 2020</option>
+                <option value="2020,06">Jun 2020</option>
+                <option value="2020,07">Jul 2020</option>
+              </select>
+            </div>
+          </div>
+          <div class="kpis">
+            <div class="row">
+              <div class="col-4">
+                <label class="kpi_text">Total de Participaciones</label>
+                <span class="kpi_val kpi_part"></span>
+              </div>
+              <div class="col-4">
+                <label class="kpi_text">Total de Asistentes</label>
+                <span class="kpi_val kpi_memb"></span>
+              </div>
+              <div class="col-4">
+                <label class="kpi_text">Total de Sesiones</label>
+                <span class="kpi_val kpi_sess"></span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+              <div id="table_results" class="table-responsive" style="text-align: center;">
+                  <table class="table table-sm ">
+                    <thead class="header">
+                    </thead>
+                    <tbody class="data">
+                    </tbody>
+                  </table>
+              </div>
+          </div>            
+        </div>
+        <script src="/static/js/app.js"></script>
+        <!--<script src="/static/js/timelineRating.js"></script>-->
+        <!--<script src="/static/js/decade.js"></script>-->
+    </body>
+</html>

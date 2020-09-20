@@ -1,0 +1,43 @@
+.navbar-dark{
+  background-color:#722431;
+}
+
+
+.header th {
+  position: sticky;
+  top: 0; /* Don't forget this, required for the stickiness */
+}
+
+
+.data {
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ======== Filters ========== */
+#filters div{
+  text-align: center;
+  padding: 5px;
+}
+
+/* ======== KPIS section  ============*/
+.kpis{
+  text-align: center;
+}
+
+.kpis div {
+  background-color: #00274B;
+  color: white;
+  margin: 5px 0;
+}
+
+.kpi_text{
+  display: block;
+}
+
+.kpi_val{
+  font-weight: bold;
+  font-size: 25px;
+
+}
