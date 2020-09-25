@@ -45,6 +45,7 @@ app = Flask(__name__)
 #################################################
 # Flask Routes
 #################################################
+
 @app.route("/")
 def home():
     print("======================================")
@@ -59,9 +60,12 @@ def year():
 def overview():
     print("======================================")
     return render_template("overview.html")
+
+
 #################################################
 # Flask API
 #################################################
+
 @app.route("/api/v1/getResultsPerDateRange/<year_>/<month_>",methods=["GET"])
 def resultsPerDateRange(year_,month_):
     json_results = api_db.getResultsPerDateRange(int(year_),int(month_))
