@@ -62,6 +62,14 @@ def overview():
     return render_template("overview.html")
 
 
+@app.errorhandler(404)
+def pageNotFound(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def internalServerError(e):
+    return render_template("500.html"), 5050
+
 #################################################
 # Flask API
 #################################################
