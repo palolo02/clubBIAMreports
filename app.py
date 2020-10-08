@@ -7,6 +7,7 @@ from flask import render_template
 from flask import redirect
 from flask import jsonify
 from flask import request
+from flask import current_app as app
 import pandas as pd
 import json
 import api_db
@@ -16,6 +17,7 @@ import pandas as pd
 import numpy as np
 
 import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
@@ -27,19 +29,26 @@ import glob
 import datetime
 import calendar
 
-# import variables from config file
-from credentials import host
-from credentials import pwd
-from credentials import usr
-from credentials import dialect
-from credentials import port
-from credentials import db
-
 #################################################
 # DB Connection
 #################################################
+db = SQLAlchemy()
 
-app = Flask(__name__)
+def create_app():
+    # Constructs the core aplication
+    app = Flask(__name__, instance_relative_config=False)
+    app.config.from_object('credentials.Config')
+    db.init_app(app)
+    
+    # Import routes and 
+    with app.app_context():
+        from . import Routes
+        db.create_all()
+        return app
+
+//https://hackersandslackers.com/flask-sqlalchemy-database-models/
+
+
 
 
 #################################################
@@ -94,4 +103,4 @@ def statisticsPerSessionType(year_):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

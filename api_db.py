@@ -24,7 +24,7 @@ from credentials import db
 
 
 
-
+connection = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
 
 
 def getAllResults():
@@ -274,7 +274,7 @@ def getResultsPerSession(date_):
     return results
 
 def getResultsPerDateRange(year_, month_):
-    connection = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    
     engine = create_engine(connection,client_encoding='utf8')
 
     # reflect an existing database into a new model
@@ -329,7 +329,7 @@ def getResultsPerDateRange(year_, month_):
 
 
 def getStatsPerDateRange(year_, month_):
-    connection = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    
     engine = create_engine(connection,client_encoding='utf8')
     
     rs = engine.execute(f'Select extract(month from session_dt) as Month_Desc, count(*) as Participations, count(distinct member_id) as Members, count(distinct session_dt) as Sessions from public."Session" where extract(month from session_dt) = {month_} and extract(year from session_dt) = {year_} group by extract(month from session_dt)')
@@ -345,7 +345,7 @@ def getStatsPerDateRange(year_, month_):
     return results
 
 def getStatsPerYear(year_):
-    connection = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    
     engine = create_engine(connection,client_encoding='utf8')    
     
     rs = engine.execute(f'Select m.member_id, m.member_desc, rt.role_type_desc, count(*) as NoParticipations FROM public."Session" s JOIN public."Member" m On m.member_id = s.member_id JOIN public."Role" r On s.role_id = r.role_id JOIN public."Role_Type" rt On r.role_type_id = rt.role_type_id where extract(year from (session_dt)) = {year_} group by m.member_id, m.member_desc, rt.role_type_desc order by m.member_id, count(*) desc ')
@@ -375,7 +375,7 @@ def getStatsPerYear(year_):
 
 
 def getStatsPerClub(year_):
-    connection = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    
     engine = create_engine(connection,client_encoding='utf8')
     rs = engine.execute(f'SELECT c.club_desc, count(distinct m.member_id) FROM public."Session" s JOIN public."Member" m 	ON m.member_id = s.member_id JOIN public."Club" c 	ON m.club_id = c.club_id where extract(year from (session_dt)) = {year_} group by c.club_desc order by count(distinct m.member_id) desc')
     dicts = []
@@ -393,7 +393,7 @@ def getStatsPerClub(year_):
     return results
 
 def getStatsPerSessionType(year_):
-    connection = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    
     engine = create_engine(connection,client_encoding='utf8')
     rs = engine.execute(f'Select distinct session_type_desc, count(distinct session_dt)  from public."Session" s  JOIN public."Session_Type" st  	on st.session_type_id = s.session_type_id  WHERE EXTRACT(YEAR FROM (session_dt)) = {year_}  group by session_type_desc  order by count(distinct session_dt) desc')
     dicts = []
