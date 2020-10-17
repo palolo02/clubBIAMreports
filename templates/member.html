@@ -28,11 +28,14 @@
                     <li class="nav-item">
                       <a class="nav-link" href="/overview">General</a>
                     </li>
-                    <li class="nav-item active">
-                      <a class="nav-link" href="#">| Anual</a>
+                    <li class="nav-item ">
+                      <a class="nav-link" href="/year">| Anual</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="/">| Mensual</a>
+                    </li>
+                    <li class="nav-item active">
+                      <a class="nav-link" href="/member">| Socio</a>
                     </li>
                   </ul>
                 </div>
@@ -41,43 +44,47 @@
         <div class="container">
           <div id="filters" class="row">
             <div class="col-6">
-              <label>Año</label>
+              <label>Socio</label>
               <select>
-                <option>2020</option>
+                <option>Javier Salazar</option>
               </select>
             </div>
             <div class="col-6">
             </div>
           </div>
-          <div class="kpis">
-            <div class="row">
-              <div class="col-4">
-                <label class="kpi_text">Total de Participaciones</label>
-                <span class="kpi_val kpi_part"></span>
-              </div>
-              <div class="col-4">
-                <label class="kpi_text">Total de Asistentes</label>
-                <span class="kpi_val kpi_memb"></span>
-              </div>
-              <div class="col-4">
-                <label class="kpi_text">Total de Sesiones</label>
-                <span class="kpi_val kpi_sess"></span>
-              </div>
+          <div class="row">
+            <div class="col-6">
+              <div id="yearly"></div>
+            </div>
+            <div class="col-6">
+              <div id="role"></div>
             </div>
           </div>
           <div class="row">
+            <div class="col-6">
               <div id="table_results" class="table-responsive" style="text-align: center;">
-                  <table class="table table-sm ">
-                    <thead class="header">
-                    </thead>
-                    <tbody class="data">
-                    </tbody>
-                  </table>
+                <table class="table table-sm ">
+                  <thead class="header">
+                  </thead>
+                  <tbody class="data">
+                  </tbody>
+                </table>
               </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <label class="kpi_text"></label>
+              </div>
+              <div class="row">
+                <label class="kpi_text">Discurso Ganador</label>
+              </div>
+              <div class="row">
+                <label class="kpi_text">Rol Ganador</label>
+              </div>
+            </div>
+              
           </div>            
         </div>
-        <script src="/static/js/year.js"></script>
-        <!--<script src="/static/js/timelineRating.js"></script>-->
-        <!--<script src="/static/js/decade.js"></script>-->
+        <script src="/static/js/member.js"></script>
     </body>
 </html>
