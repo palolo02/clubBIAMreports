@@ -21,47 +21,55 @@ function renderTableYear(url){
         keys = d3.keys(schema)
         values = d3.values(schema)
         // Get only values from result
-        values = values.map(d => d3.values(d))
-        //console.log(keys)
-        //console.log(values)
         
-        // Add table headers in HTML
-        header = d3.select(".header");
-        trow = header.append("tr");
-        // Iterate over each header
-        keys.forEach(function(h){
-            trow.append("th").text(h)
-        })
-    
-        // Add table data in HTML
-        data = d3.select(".data");
-        //For row in results add all the column
-        for (i=0; i< values[0].length;i++){
-            trow = data.append("tr");
+        values = values.map(d => d3.values(d))
 
-            for(j=0; j<values.length;j++){
-                // for percentage
-                
-                if(j>0 && j%2 == 0 && values[j][i] > 60)
-                    trow.append("td").classed("table-success",true).text(`${values[j][i]}%`)
-                else if(j>0 && j%2 ==0 && values[j][i] >= 30 && values[j][i] <= 60)
-                    trow.append("td").classed("table-warning",true).text(`${values[j][i]}%`)
-                else if(j>0 && j%2 ==0 && values[j][i] !== null && values[j][i] < 30)
-                    trow.append("td").classed("table-danger",true).text(`${values[j][i]}%`)
-                
-                else if(j == values.length-1 && values[j][i] >= 10)
-                    trow.append("td").classed("table-success",true).text(`${values[j][i]}`)
-                else if(j == values.length-1 && values[j][i] >= 5 && values[j][i] < 10)
-                    trow.append("td").classed("table-warning",true).text(`${values[j][i]}`)
-                else if(j == values.length-1 && values[j][i] < 5)
-                    trow.append("td").classed("table-danger",true).text(`${values[j][i]}`)
-                else
-                    trow.append("td").text(values[j][i])
-                
-                
+        obj = []
+        for(i=0; i<values[0].length;i++){
+            temp = {}
+            for(j=0;j < keys.length; j++){
+                temp[keys[j]] = values[j][i]
             }
+            obj.push(temp)
         }
         
+        obj['Mes'] = getMonths(obj.map(o => o['Mes']))
+
+        // Add table data in HTML
+        data = d3.select(".data");
+        
+        // Iterate over each header
+        header = data.append("tr")
+        keys.forEach(function(h){
+            header.append("th").text(h)
+        })
+
+        // Add table data in HTML
+        data = d3.select(".data");
+        obj.forEach(function(row){
+            trow = data.append("tr");
+            Object.entries(row).forEach(([key, value]) => {
+                // NUll values
+                if(value == null )
+                    trow.append("td").text('')
+                //Percentages
+                else if(key.includes('%') && value > 60)
+                    trow.append("td").classed("table-success",true).text(`${value}%`)
+                else if(key.includes('%') && value >= 30 && value < 60)
+                    trow.append("td").classed("table-warning",true).text(`${value}%`)
+                else if(key.includes('%') && value < 30)
+                    trow.append("td").classed("table-danger",true).text(`${value}%`)
+                //Total
+                else if(key == 'Total' && value >= 10)
+                    trow.append("td").classed("table-success",true).text(`${value}`)
+                else if(key == 'Total' && value >= 5 && value < 10)
+                    trow.append("td").classed("table-warning",true).text(`${value}`)
+                else if(key == 'Total' && value < 5)
+                    trow.append("td").classed("table-danger",true).text(`${value}`)
+                else
+                    trow.append("td").text(`${value}`)
+            });
+        });
     
 });
 

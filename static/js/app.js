@@ -26,9 +26,10 @@ function loadEvents(){
 
 
 function rendertable(url){
-
+    
     // Read data from Flask
     d3.json(url).then((incomingData) =>{
+
         //Parse JSON result
         schema = JSON.parse(incomingData)
         //console.log(schema)       
@@ -36,36 +37,46 @@ function rendertable(url){
         keys = d3.keys(schema)
         values = d3.values(schema)
         // Get only values from result
-        values = values.map(d => d3.values(d))
-        //console.log(keys)
-        //console.log(values)
         
-        // Add table headers in HTML
-        header = d3.select(".header");
-        trow = header.append("tr");
-        // Iterate over each header
-        keys.forEach(function(h){
-            trow.append("th").text(h)
-        })
-    
-        // Add table data in HTML
-        data = d3.select(".data");
-        //For row in results add all the column
-        for (i=0; i< values[0].length;i++){
-            trow = data.append("tr");
-            for(j=0; j<values.length;j++){
-                if(j>0 && values[j][i]>=3)
-                    trow.append("td").classed("table-success",true).text(values[j][i])
-                else if(j == values.length-1 && values[j][i]==2)
-                    trow.append("td").classed("table-warning",true).text(values[j][i])
-                else if(j == values.length-1 && values[j][i]==1)
-                    trow.append("td").classed("table-danger",true).text(values[j][i])
-                else
-                    trow.append("td").text(values[j][i])
+        values = values.map(d => d3.values(d))
+
+        obj = []
+        for(i=0; i<values[0].length;i++){
+            temp = {}
+            for(j=0;j < keys.length; j++){
+                temp[keys[j]] = values[j][i]
             }
+            obj.push(temp)
         }
         
-    
+        obj['Mes'] = getMonths(obj.map(o => o['Mes']))
+
+        // Add table data in HTML
+        data = d3.select(".data");
+        
+        // Iterate over each header
+        header = data.append("tr")
+        keys.forEach(function(h){
+            header.append("th").text(h)
+        })
+
+        // Add table data in HTML
+        data = d3.select(".data");
+        obj.forEach(function(row){
+            trow = data.append("tr");
+            Object.entries(row).forEach(([key, value]) => {
+                if(value == null )
+                    trow.append("td").text('')
+                else if(key == 'Total' && value >= 3)
+                    trow.append("td").classed("table-success",true).text(`${value}`)
+                else if(key == 'Total' && value == 2)
+                    trow.append("td").classed("table-warning",true).text(`${value}`)
+                else if(key == 'Total' && value == 1)
+                    trow.append("td").classed("table-danger",true).text(`${value}`)
+                else
+                    trow.append("td").text(`${value}`)
+            });
+        });
 });
 
 }

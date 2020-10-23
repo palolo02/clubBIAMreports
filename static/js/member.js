@@ -1,6 +1,7 @@
+
 init();
 
-function init(){
+   function init(){
     url_detailed_data = '/api/v1/getDetailedResults/Javier%20Salazar/2020';
     url_role_data = '/api/v1/getRoleResults/Javier%20Salazar/2020'
     url_data = '/api/v1/getAllResults/Javier%20Salazar/2020'
@@ -21,47 +22,36 @@ function renderDetailedData(url){
         keys = d3.keys(schema)
         values = d3.values(schema)
         // Get only values from result
-        values = values.map(d => d3.values(d))
-        //console.log(keys)
-        //console.log(values)
         
-        // Add table headers in HTML
-        header = d3.select(".header");
-        trow = header.append("tr");
-        // Iterate over each header
-        keys.forEach(function(h){
-            if(h != 'Socio' && h != 'Año')
-                trow.append("th").text(h)
-        })
-    
+        values = values.map(d => d3.values(d))
+
+        obj = []
+        for(i=0; i<values[0].length;i++){
+            temp = {}
+            for(j=0;j < keys.length; j++){
+                temp[keys[j]] = values[j][i]
+            }
+            obj.push(temp)
+        }
+        console.log(obj)
+        obj['Mes'] = getMonths(obj.map(o => o['Mes']))
+
         // Add table data in HTML
         data = d3.select(".data");
-        //For row in results add all the column
-        for (i=2; i< values[0].length;i++){
-            trow = data.append("tr");
+        
+        header = data.append("tr")
+        header.append("th").text('Mes')
+        header.append("th").text('Rol')
+        header.append("th").text('Tipo Rol')
+        header.append("th").text('Participaciones')
 
-            for(j=2; j<values.length;j++){
-                // for percentage
-                
-                if(j>0 && j%2 == 0 && values[j][i] > 60)
-                    trow.append("td").classed("table-success",true).text(`${values[j][i]}`)
-                else if(j>0 && j%2 ==0 && values[j][i] >= 30 && values[j][i] <= 60)
-                    trow.append("td").classed("table-warning",true).text(`${values[j][i]}`)
-                else if(j>0 && j%2 ==0 && values[j][i] !== null && values[j][i] < 30)
-                    trow.append("td").classed("table-danger",true).text(`${values[j][i]}`)
-                
-                else if(j == values.length-1 && values[j][i] >= 10)
-                    trow.append("td").classed("table-success",true).text(`${values[j][i]}`)
-                else if(j == values.length-1 && values[j][i] >= 5 && values[j][i] < 10)
-                    trow.append("td").classed("table-warning",true).text(`${values[j][i]}`)
-                else if(j == values.length-1 && values[j][i] < 5)
-                    trow.append("td").classed("table-danger",true).text(`${values[j][i]}`)
-                else
-                    trow.append("td").text(values[j][i])
-                
-                
-            }
-        }
+        obj.forEach(function(row){
+            trow = data.append("tr");
+            trow.append("td").text(`${getMonthName(row['Mes'])}`)
+            trow.append("td").text(`${row['Rol']}`)
+            trow.append("td").text(`${row['TipoRol']}`)
+            trow.append("td").classed("table-success",true).text(`${row['Participaciones']}`)
+        });
         
     
 });
@@ -103,11 +93,11 @@ function renderRoleData(url){
         }
         
         var data = [];
-
+        
         roles.forEach(function(role){
             rows = obj.filter(row => row['TipoRol'] == role);
             data.push({
-                x: rows.map(r => r['Mes']),
+                x: getMonths(rows.map(r => r['Mes'])),
                 y: rows.map(r => r['NoParticipaciones']),
                 text: rows.map(r => r['NoParticipaciones']),
                 textposition: 'auto',
@@ -115,7 +105,8 @@ function renderRoleData(url){
                 type: 'bar'
               });
         })
-          
+        
+        //
           
         var layout = {
             barmode: 'stack',
@@ -154,7 +145,7 @@ function renderYearlyData(url){
         }
 
         var traceLine = {
-            x: results.map(r => r['Mes']),
+            x: getMonths(results.map(r => r['Mes'])),
             y: results.map(r => r['NoParticipaciones']),
             text: results.map(r => r['NoParticipaciones']),
             textposition: 'top',
