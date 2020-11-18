@@ -50,7 +50,8 @@ function rendertable(url){
         }
         
         obj['Mes'] = getMonths(obj.map(o => o['Mes']))
-
+        // Obtain the Max value from the totals
+        maxTotal = Math.max.apply(Math, obj.map(o => o['Total']))
         // Add table data in HTML
         data = d3.select(".data");
         
@@ -59,7 +60,7 @@ function rendertable(url){
         keys.forEach(function(h){
             header.append("th").text(h)
         })
-
+        
         // Add table data in HTML
         data = d3.select(".data");
         obj.forEach(function(row){
@@ -67,17 +68,19 @@ function rendertable(url){
             Object.entries(row).forEach(([key, value]) => {
                 if(value == null )
                     trow.append("td").text('')
-                else if(key == 'Total' && value >= 3)
-                    trow.append("td").classed("table-success",true).text(`${value}`)
-                else if(key == 'Total' && value == 2)
-                    trow.append("td").classed("table-warning",true).text(`${value}`)
-                else if(key == 'Total' && value == 1)
-                    trow.append("td").classed("table-danger",true).text(`${value}`)
+                else if(key == 'Total')
+                    trow.append("td").classed('total',true).text(`${value}`)
+                else if(key != 'Socios')
+                {
+                    //perc = value / maxTotal
+                    classHeatMap = getHeatMapClassMember(value)
+                    trow.append("td").classed(classHeatMap,true).text(`${value}`)
+                }
                 else
                     trow.append("td").text(`${value}`)
             });
         });
-});
+    });
 
 }
 

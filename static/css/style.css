@@ -3,22 +3,29 @@
 }
 
 
-.header th {
-  position: sticky;
-  top: 0; /* Don't forget this, required for the stickiness */
-}
 
 
 .data {
     height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
+    line-height:1.2
 }
 
+.table td, .table th {  
+  vertical-align: middle;
+}
+
+
 /* ======== Filters ========== */
-#filters div{
+#filters{
+  background-color: lightsteelblue;
   text-align: center;
   padding: 5px;
+}
+
+.filter{
+  margin: 25px 0;
 }
 
 /* ======== KPIS section  ============*/
@@ -34,10 +41,26 @@
 
 .kpi_text{
   display: block;
+  color:  #00274B;
 }
 
 .kpi_val{
+  background-color: #00274B;
+  color: white;
+  border-radius: 50%;
   font-weight: bold;
   font-size: 25px;
-
+  width: 50px;
+  height: 50px;
+  padding: 10px;
 }
+
+/* Heat map Colors */
+.b100 { background-color: #002549; color:white}
+.b75 { background-color: #001f43; color:white}
+.b50 { background-color: #005076; color:white}
+.b25 { background-color: #0079a1; color:white}
+.b0 { background-color: #00d4ff; color:black}
+
+.total{background-color: #E1DFDE;}
+

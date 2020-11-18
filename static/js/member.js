@@ -20,7 +20,9 @@ function renderDetailedData(url){
         //console.log(schema)       
         // Get keys and values from dataframe
         keys = d3.keys(schema)
+        
         values = d3.values(schema)
+        
         // Get only values from result
         
         values = values.map(d => d3.values(d))
@@ -34,23 +36,36 @@ function renderDetailedData(url){
             obj.push(temp)
         }
         console.log(obj)
-        obj['Mes'] = getMonths(obj.map(o => o['Mes']))
+        //obj['Mes'] = getMonths(obj.map(o => o['Mes']))
 
         // Add table data in HTML
         data = d3.select(".data");
         
+        
         header = data.append("tr")
-        header.append("th").text('Mes')
-        header.append("th").text('Rol')
-        header.append("th").text('Tipo Rol')
-        header.append("th").text('Participaciones')
+        Object.entries(obj[0]).forEach(([key, value]) => {
+            if(key.includes("."))
+                header.append("th").text(`${getMonthName(parseInt(key))}`)
+            else
+                header.append("th").text(`${key}`)
+        });
+    
 
         obj.forEach(function(row){
             trow = data.append("tr");
-            trow.append("td").text(`${getMonthName(row['Mes'])}`)
-            trow.append("td").text(`${row['Rol']}`)
-            trow.append("td").text(`${row['TipoRol']}`)
-            trow.append("td").classed("table-success",true).text(`${row['Participaciones']}`)
+            Object.entries(row).forEach(([key, value]) => {
+                if(value == null)
+                    trow.append("td").text('')
+                else if (key == 'Rol' || key == 'TipoRol')
+                    trow.append("td").text(`${value}`)
+                else if (key == 'Total')
+                    trow.append("td").classed('total',true).text(`${value}`)
+                else{
+                    classHeatMap = getHeatMapClassMember(value)
+                    trow.append("td").classed(classHeatMap,true).text(`${value}`)
+                }   
+            });
+            
         });
         
     

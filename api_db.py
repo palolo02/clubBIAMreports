@@ -65,7 +65,13 @@ def getDetailedResultsPerMember(_member,_year, db_):
         d['Participaciones'] = row[5]
         dicts.append(d)
     results = pd.DataFrame(dicts)
+    results = results.pivot_table(values='Participaciones',index=[results.Rol,results.TipoRol],columns='Mes',aggfunc='sum', dropna=True)
+    results.loc[:,'Total'] = results.sum(axis=1)
+    #results.sort_values(by='Total',ascending=False,inplace=True)
+    results.reset_index(inplace=True)
+    #results.rename(columns={'member_desc':'Socios'}, inplace=True)
     return results
+
 
 def getResultsPerDateRange(year_, month_, db_):
     
