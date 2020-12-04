@@ -2,9 +2,9 @@
 init();
 
    function init(){
-    url_detailed_data = '/api/v1/getDetailedResults/Javier%20Salazar/2020';
-    url_role_data = '/api/v1/getRoleResults/Javier%20Salazar/2020'
-    url_data = '/api/v1/getAllResults/Javier%20Salazar/2020'
+    url_detailed_data = '/api/v1/getDetailedResults/Paolo%20Vega/2020';
+    url_role_data = '/api/v1/getRoleResults/Paolo%20Vega/2020'
+    url_data = '/api/v1/getAllResults/Paolo%20Vega/2020'
     renderDetailedData(url_detailed_data);
     renderYearlyData(url_data);
     renderRoleData(url_role_data);
@@ -40,7 +40,6 @@ function renderDetailedData(url){
 
         // Add table data in HTML
         data = d3.select(".data");
-        
         
         header = data.append("tr")
         Object.entries(obj[0]).forEach(([key, value]) => {
@@ -108,7 +107,9 @@ function renderRoleData(url){
         }
         
         var data = [];
-        
+        //var colors = ['#FFE066','#247BA0','#70C1B3']
+        var colors = ['#722431','#317224','#243172']
+        var chooseColor = 0;
         roles.forEach(function(role){
             rows = obj.filter(row => row['TipoRol'] == role);
             data.push({
@@ -117,8 +118,15 @@ function renderRoleData(url){
                 text: rows.map(r => r['NoParticipaciones']),
                 textposition: 'auto',
                 name: role,
-                type: 'bar'
+                type: 'bar',
+                marker: {
+                    color: colors[chooseColor],
+                    line: {
+                      color: colors[chooseColor]
+                    }
+                  }
               });
+            chooseColor++;
         })
         
         //
@@ -166,7 +174,13 @@ function renderYearlyData(url){
             textposition: 'top',
             mode: 'lines+markers+text',
             name: 'Participaciones',
-            type: 'scatter'
+            type: 'scatter',
+            marker: {
+                color: '#00274B',
+                line: {
+                  color: '#00274B'
+                }
+              },
         };
         
         var dataPoints = [traceLine];
