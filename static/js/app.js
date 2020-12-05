@@ -58,7 +58,7 @@ function rendertable(url){
         // Iterate over each header
         header = data.append("tr")
         keys.forEach(function(h){
-            header.append("th").text(h)
+            header.append("th").classed('title',true).text(h);
         })
         
         // Add table data in HTML
@@ -77,7 +77,7 @@ function rendertable(url){
                     trow.append("td").classed(classHeatMap,true).text(`${value}`)
                 }
                 else
-                    trow.append("td").text(`${value}`)
+                    trow.append("td").classed('name',true).text(`${value}`)
             });
         });
     });

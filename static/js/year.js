@@ -41,7 +41,10 @@ function renderTableYear(url){
         // Iterate over each header
         header = data.append("tr")
         keys.forEach(function(h){
-            header.append("th").text(h)
+            if(h.includes("%"))
+                header.append("th").text('%')
+            else
+                header.append("th").text(h)
         })
 
         // Add table data in HTML

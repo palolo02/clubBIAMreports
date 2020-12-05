@@ -12,8 +12,13 @@
     line-height:1.2
 }
 
-.table td, .table th {  
+#table_results .table .header td, #table_results .table  th {  
   vertical-align: middle;
+  font-size: small;
+}
+
+#table_results .table .data td.name {  
+  font-size: medium;
 }
 
 

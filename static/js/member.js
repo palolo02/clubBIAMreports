@@ -1,5 +1,4 @@
 
-//init();
 loadMembers();
 
 // Stack bars colors
@@ -22,6 +21,7 @@ function loadMembers(){
             console.log(v);
             d3.select("#selMember").append("option").attr('value',v).text(v)
         });
+        //Initialize components
         init();
     });
 }
@@ -107,7 +107,7 @@ function renderDetailedData(url){
                 if(value == null)
                     trow.append("td").text('')
                 else if (key == 'Rol' || key == 'TipoRol')
-                    trow.append("td").text(`${value}`)
+                    trow.append("td").text(`${value}`).classed('name',true)
                 else if (key == 'Total')
                     trow.append("td").classed('total',true).text(`${value}`)
                 else{
