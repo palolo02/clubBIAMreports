@@ -176,3 +176,19 @@ def getStatsPerSessionType(year_,db_):
     results.reset_index(inplace=True)
     results.rename(columns={'session_type_desc':'Sesión'}, inplace=True)
     return results
+
+def getActiveMembers(_year, db_):
+    rs = db_.engine.execute(f'Select m.member_desc, count(*) as participations from public."Session" s JOIN public."Member" m  ON m.member_id = s.member_id where (Extract(Year from session_dt)) = {_year} and "isGuest" = FALSE group by m.member_desc having count(*) > 4 order by m.member_desc')
+    dicts = []
+    for row in rs:
+        d = {}
+        d['Socio'] = row[0]
+        d['Participaciones'] = row[1]
+        dicts.append(d)
+    results = pd.DataFrame(dicts)
+    #results = results.pivot_table(values='Participaciones',index=[results.Rol,results.TipoRol],columns='Mes',aggfunc='sum', dropna=True)
+    #results.loc[:,'Total'] = results.sum(axis=1)
+    #results.sort_values(by='Total',ascending=False,inplace=True)
+    results.reset_index(inplace=True)
+    #results.rename(columns={'member_desc':'Socios'}, inplace=True)
+    return results

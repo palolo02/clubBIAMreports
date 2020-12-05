@@ -109,6 +109,13 @@ def resultsDetailedResults(member_,year_):
     json_results = json_results.to_json()
     return jsonify(json_results)
 
+@app.route("/api/v1/getActiveMembers/<year_>",methods=["GET"])
+def resultsActiveMembers(year_):
+    json_results = api_db.getActiveMembers(int(year_),db)
+    json_results = json_results.to_json()
+    return jsonify(json_results)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

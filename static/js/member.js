@@ -1,32 +1,79 @@
 
-init();
+//init();
+loadMembers();
 
-   function init(){
-    url_detailed_data = '/api/v1/getDetailedResults/Paolo%20Vega/2020';
-    url_role_data = '/api/v1/getRoleResults/Paolo%20Vega/2020'
-    url_data = '/api/v1/getAllResults/Paolo%20Vega/2020'
+// Stack bars colors
+var colors = ['#722431','#317224','#243172']
+var chooseColor = 0;
+
+function loadMembers(){
+    var url = `/api/v1/getActiveMembers/2020`;
+    d3.json(url).then((incomingData) =>{
+        //Parse JSON result
+        schema = JSON.parse(incomingData)
+        
+        // Get keys and values from dataframe
+        keys = d3.keys(schema)        
+        values = d3.values(schema)
+        // Get only values from result        
+        values = values.map(d => d3.values(d))
+        console.log(values[1])
+        values[1].forEach(function(v){
+            console.log(v);
+            d3.select("#selMember").append("option").attr('value',v).text(v)
+        });
+        init();
+    });
+}
+
+// Function to initialize graphs on webpage
+function init(){
+    option = d3.select("#selMember").property("value");
+    option = option.replace(" ","%20")
+    url_detailed_data = `/api/v1/getDetailedResults/${option}/2020`;
+    url_role_data = `/api/v1/getRoleResults/${option}/2020`
+    url_data = `/api/v1/getAllResults/${option}/2020`
+    
     renderDetailedData(url_detailed_data);
     renderYearlyData(url_data);
     renderRoleData(url_role_data);
+
+    loadMemberEvent()
+
 }
 
+// Function to attach a listener event when the dropdown selection changes
+function loadMemberEvent(){
 
+    d3.select("#selMember").on("change",function(){
+        option = d3.select("#selMember").property("value");
+        option = option.replace(" ","%20");
+        url_detailed_data = `/api/v1/getDetailedResults/${option}/2020`;
+        renderDetailedData(url_detailed_data);
+        url_role_data = `/api/v1/getRoleResults/${option}/2020`
+        renderRoleData(url_role_data);
+        url_data = `/api/v1/getAllResults/${option}/2020`
+        renderYearlyData(url_data);        
+    });
+}
+
+// Function to render the table for monthly participations
+// parameters: URL => API call with parameters to retrieve data from JSON
 function renderDetailedData(url){
 
     // Read data from Flask
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
-        //console.log(schema)       
-        // Get keys and values from dataframe
-        keys = d3.keys(schema)
         
+        // Get keys and values from dataframe
+        keys = d3.keys(schema)        
         values = d3.values(schema)
         
-        // Get only values from result
-        
+        // Get only values from result        
         values = values.map(d => d3.values(d))
 
+        // Create an iterable object with all properties from JSON
         obj = []
         for(i=0; i<values[0].length;i++){
             temp = {}
@@ -35,23 +82,27 @@ function renderDetailedData(url){
             }
             obj.push(temp)
         }
-        console.log(obj)
-        //obj['Mes'] = getMonths(obj.map(o => o['Mes']))
 
-        // Add table data in HTML
-        data = d3.select(".data");
-        
-        header = data.append("tr")
+        // Get table element to render data
+        var tableData = d3.select(".data");
+
+        // Remove all content from table
+        tableData.selectAll("*").remove()
+        d3.select(".header").selectAll("*").remove()
+
+        // Add headers in HTML table
+        header = tableData.append("tr")
         Object.entries(obj[0]).forEach(([key, value]) => {
+            // Replace month numbers per names
             if(key.includes("."))
                 header.append("th").text(`${getMonthName(parseInt(key))}`)
             else
                 header.append("th").text(`${key}`)
         });
     
-
+        // Add rows in HTML table
         obj.forEach(function(row){
-            trow = data.append("tr");
+            trow = tableData.append("tr");
             Object.entries(row).forEach(([key, value]) => {
                 if(value == null)
                     trow.append("td").text('')
@@ -72,6 +123,8 @@ function renderDetailedData(url){
 
 }
 
+// Function to render the montly participations per Role in session
+// parameters: URL => API call with parameters to retrieve data from JSON
 function renderRoleData(url){
 
     // Read stats from Flask
@@ -106,13 +159,11 @@ function renderRoleData(url){
             }
         }
         
-        var data = [];
-        //var colors = ['#FFE066','#247BA0','#70C1B3']
-        var colors = ['#722431','#317224','#243172']
-        var chooseColor = 0;
+        
+        var dataRole = []
         roles.forEach(function(role){
             rows = obj.filter(row => row['TipoRol'] == role);
-            data.push({
+            dataRole.push({
                 x: getMonths(rows.map(r => r['Mes'])),
                 y: rows.map(r => r['NoParticipaciones']),
                 text: rows.map(r => r['NoParticipaciones']),
@@ -128,22 +179,23 @@ function renderRoleData(url){
               });
             chooseColor++;
         })
-        
+        chooseColor = 0;
         //
           
-        var layout = {
+        var layoutRole = {
             barmode: 'stack',
             title:'Por Tipo de Rol',
             xaxis:{title:"Mes"},
             yaxis:{title:"Participaciones",range: [0, 10]}
         };
           
-        Plotly.newPlot('role', data, layout, {displayModeBar: false}, {responsive: true});
+        Plotly.newPlot('role', dataRole, layoutRole, {displayModeBar: false}, {responsive: true});
     }); 
 
 }
 
-
+// Function to render the montly participations for the entire year
+// parameters: URL => API call with parameters to retrieve data from JSON
 function renderYearlyData(url){
 
     // Read stats from Flask
@@ -167,7 +219,7 @@ function renderYearlyData(url){
             results.push(temp)
         }
 
-        var traceLine = {
+        var traceLineTable = {
             x: getMonths(results.map(r => r['Mes'])),
             y: results.map(r => r['NoParticipaciones']),
             text: results.map(r => r['NoParticipaciones']),
@@ -183,15 +235,15 @@ function renderYearlyData(url){
               },
         };
         
-        var dataPoints = [traceLine];
+        var dataPoints = [traceLineTable];
 
-        var layout = {
+        var layoutTable = {
             title:'Participaciones en el año',
             xaxis:{title:"Mes"},
             yaxis:{title:"Participaciones", range: [0, 10]}
         };
           
-        Plotly.newPlot('yearly', dataPoints, layout, {displayModeBar: false}, {responsive: true});
+        Plotly.newPlot('yearly', dataPoints, layoutTable, {displayModeBar: false}, {responsive: true});
         
     }); 
 
