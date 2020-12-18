@@ -25,7 +25,7 @@ connection = Config.SQLALCHEMY_DATABASE_URI
 
 
 def getAllResults(_member,_year,db_):
-    rs = db_.engine.execute(f'Select  m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  count(*) as NoPart  from public."Session" s  JOIN public."Member" m  ON m.member_id = s.member_id  where m.member_desc like \'{_member}\'  and (Extract(Year from session_dt)) = {_year}  and "isGuest" = false  group by (Extract(Year from session_dt)),  (Extract(Month from session_dt)),  m.member_desc ')
+    rs = db_.engine.execute(f'Select  m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  count(*) as NoPart  from public."Session" s  JOIN public."Member" m  ON m.member_id = s.member_id  where m.member_desc like \'{_member}\'  and (Extract(Year from session_dt)) = {_year}  and "isGuest" = FALSE  group by (Extract(Year from session_dt)),  (Extract(Month from session_dt)),  m.member_desc ')
     dicts = []
     for row in rs:
         d = {}
@@ -39,7 +39,7 @@ def getAllResults(_member,_year,db_):
 
 
 def getResultsPerMember(_member,_year, db_):
-    rs = db_.engine.execute(f'Select  m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  rt.role_type_desc,  count(*) as NoPart  from public."Session" s  JOIN public."Member" m  ON m.member_id = s.member_id  JOIN public."Role" r  ON r.role_id = s.role_id  JOIN public."Role_Type" rt  ON r.role_type_id = rt.role_type_id  where m.member_desc = \'{_member}\'  and (Extract(Year from session_dt)) = {_year}  and "isGuest" = false  group by (Extract(Year from session_dt)),  (Extract(Month from session_dt)),  rt.role_type_desc,  m.member_desc ')
+    rs = db_.engine.execute(f'Select  m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  rt.role_type_desc,  count(*) as NoPart  from public."Session" s  JOIN public."Member" m  ON m.member_id = s.member_id  JOIN public."Role" r  ON r.role_id = s.role_id  JOIN public."Role_Type" rt  ON r.role_type_id = rt.role_type_id  where m.member_desc = \'{_member}\'  and (Extract(Year from session_dt)) = {_year}  and "isGuest" = FALSE  group by (Extract(Year from session_dt)),  (Extract(Month from session_dt)),  rt.role_type_desc,  m.member_desc ')
     dicts = []
     for row in rs:
         d = {}
@@ -52,8 +52,9 @@ def getResultsPerMember(_member,_year, db_):
     results = pd.DataFrame(dicts)
     return results
 
+# Get information for each member
 def getDetailedResultsPerMember(_member,_year, db_):
-    rs = db_.engine.execute(f'Select  m.member_desc, (Extract(Year from session_dt)) as Anio, (Extract(Month from session_dt)) as Mes, r.role_desc, rt.role_type_desc, count(*) as NoPart from public."Session" s JOIN public."Member" m ON m.member_id = s.member_id JOIN public."Role" r ON r.role_id = s.role_id JOIN public."Role_Type" rt ON r.role_type_id = rt.role_type_id where m.member_desc = \'{_member}\' and (Extract(Year from session_dt)) = {_year} group by (Extract(Year from session_dt)), (Extract(Month from session_dt)), r.role_desc, rt.role_type_desc, m.member_desc')
+    rs = db_.engine.execute(f' SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(role_desc,\'Evaluador\'), COALESCE(role_type_desc,\'Equipo Evaluación\'), COALESCE(NoPart,0) FROM ( 	SELECT m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  r.role_desc,  rt.role_type_desc,  COUNT(*) as NoPart  FROM public."Session" s  LEFT JOIN public."Member" m  	ON m.member_id = s.member_id  LEFT JOIN public."Role" r  	ON r.role_id = s.role_id  LEFT JOIN public."Role_Type" rt  	ON r.role_type_id = rt.role_type_id  WHERE  (Extract(Year from session_dt)) = {_year} AND m.member_desc = \'{_member}\'  GROUP BY (Extract(Year from session_dt)), (Extract(Month from session_dt)), r.role_desc, rt.role_type_desc, m.member_desc ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year} ')
     dicts = []
     for row in rs:
         d = {}
@@ -69,10 +70,11 @@ def getDetailedResultsPerMember(_member,_year, db_):
     results.loc[:,'Total'] = results.sum(axis=1)
     #results.sort_values(by='Total',ascending=False,inplace=True)
     results.reset_index(inplace=True)
+    print(results)
     #results.rename(columns={'member_desc':'Socios'}, inplace=True)
     return results
 
-
+# Get monthly stats for only members of the club
 def getResultsPerDateRange(year_, month_, db_):
     
     
@@ -81,7 +83,7 @@ def getResultsPerDateRange(year_, month_, db_):
     end_date = datetime.date(year_, month_, num_days)
     start_date = f"'{start_date}'"
     end_date = f"'{end_date}'"
-    result = db_.engine.execute(f'Select  m.member_desc, r.Role_desc, count(session_dt) as NoParticipations from public."Session" s JOIN public."Member" m ON m.member_id = s.member_id JOIN public."Role" r ON r.role_id = s.role_id WHERE session_dt >= {start_date} AND session_dt <= {end_date} GROUP BY m.member_desc, r.role_desc ')
+    result = db_.engine.execute(f'Select  m.member_desc, r.Role_desc, count(session_dt) as NoParticipations from public."Session" s JOIN public."Member" m ON m.member_id = s.member_id JOIN public."Role" r ON r.role_id = s.role_id WHERE session_dt >= {start_date} AND session_dt <= {end_date} and "isGuest" = FALSE GROUP BY m.member_desc, r.role_desc ')
     #result = session.query(Member.member_desc, Role.role_desc, func.count(Session2.session_dt).label('NoParticipations')).join(Member,Session2.member_id==Member.member_id).join(Role, Session2.role_id == Role.role_id).filter(and_(Session2.session_dt >= start_date, Session2.session_dt <= end_date )).group_by(Member.member_desc,Role.role_desc).all()
     dicts = []
 
@@ -103,9 +105,9 @@ def getResultsPerDateRange(year_, month_, db_):
     
     return results
 
-
+# Get monthly stats per club (only ibcluding members)
 def getStatsPerDateRange(year_, month_, db_):
-    rs = db_.engine.execute(f'Select extract(month from session_dt) as Month_Desc, count(*) as Participations, count(distinct member_id) as Members, count(distinct session_dt) as Sessions from public."Session" where extract(month from session_dt) = {month_} and extract(year from session_dt) = {year_} group by extract(month from session_dt)')
+    rs = db_.engine.execute(f'Select extract(month from session_dt) as Month_Desc, count(*) as Participations, count(distinct s.member_id) as Members, count(distinct session_dt) as Sessions from public."Session" s JOIN public."Member" m 	On s.member_id = m.member_id where extract(month from session_dt) = {month_} and extract(year from session_dt) = {year_} and "isGuest" = FALSE group by extract(month from session_dt) ')
     dicts = []
     for row in rs:
         d = {}
@@ -117,8 +119,9 @@ def getStatsPerDateRange(year_, month_, db_):
     results = pd.DataFrame(dicts)
     return results
 
+# Get all the accumulated stats for only members in the club
 def getStatsPerYear(year_,db_):
-    rs = db_.engine.execute(f'Select m.member_id, m.member_desc, rt.role_type_desc, count(*) as NoParticipations FROM public."Session" s JOIN public."Member" m On m.member_id = s.member_id JOIN public."Role" r On s.role_id = r.role_id JOIN public."Role_Type" rt On r.role_type_id = rt.role_type_id where extract(year from (session_dt)) = {year_} group by m.member_id, m.member_desc, rt.role_type_desc order by m.member_id, count(*) desc ')
+    rs = db_.engine.execute(f'Select m.member_id, m.member_desc, rt.role_type_desc, count(*) as NoParticipations FROM public."Session" s JOIN public."Member" m On m.member_id = s.member_id JOIN public."Role" r On s.role_id = r.role_id JOIN public."Role_Type" rt On r.role_type_id = rt.role_type_id where extract(year from (session_dt)) = {year_} and "isGuest" = FALSE group by m.member_id, m.member_desc, rt.role_type_desc order by m.member_id, count(*) desc ')
     dicts = []
     for row in rs:
         d = {}
@@ -144,9 +147,9 @@ def getStatsPerYear(year_,db_):
     results.rename(columns={'member_desc':'Socios'}, inplace=True)
     return results
 
-
+# get monthly stats per club for only members of BIAM club
 def getStatsPerClub(year_,db_):
-    rs = db_.engine.execute(f'SELECT c.club_desc, count(distinct m.member_id) FROM public."Session" s JOIN public."Member" m 	ON m.member_id = s.member_id JOIN public."Club" c 	ON m.club_id = c.club_id where extract(year from (session_dt)) = {year_} group by c.club_desc order by count(distinct m.member_id) desc')
+    rs = db_.engine.execute(f'SELECT c.club_desc, count(distinct m.member_id) FROM public."Session" s JOIN public."Member" m 	ON m.member_id = s.member_id JOIN public."Club" c 	ON m.club_id = c.club_id where extract(year from (session_dt)) = {year_} and "isGuest" = FALSE group by c.club_desc order by count(distinct m.member_id) desc')
     dicts = []
     for row in rs:
         d = {}
@@ -161,8 +164,9 @@ def getStatsPerClub(year_,db_):
     results.rename(columns={'club_desc':'Club'}, inplace=True)
     return results
 
+# Get monthly stats per club according to the type of session
 def getStatsPerSessionType(year_,db_):
-    rs = db_.engine.execute(f'Select distinct session_type_desc, count(distinct session_dt)  from public."Session" s  JOIN public."Session_Type" st  	on st.session_type_id = s.session_type_id  WHERE EXTRACT(YEAR FROM (session_dt)) = {year_}  group by session_type_desc  order by count(distinct session_dt) desc')
+    rs = db_.engine.execute(f'Select distinct session_type_desc, count(distinct session_dt)  from public."Session" s  JOIN public."Session_Type" st  	on st.session_type_id = s.session_type_id  WHERE EXTRACT(YEAR FROM (session_dt)) = {year_} and "isGuest" = FALSE  group by session_type_desc  order by count(distinct session_dt) desc')
     dicts = []
     for row in rs:
         d = {}
@@ -177,8 +181,9 @@ def getStatsPerSessionType(year_,db_):
     results.rename(columns={'session_type_desc':'Sesión'}, inplace=True)
     return results
 
+# Display only members with at least 1 participation
 def getActiveMembers(_year, db_):
-    rs = db_.engine.execute(f'Select m.member_desc, count(*) as participations from public."Session" s JOIN public."Member" m  ON m.member_id = s.member_id where (Extract(Year from session_dt)) = {_year} and "isGuest" = FALSE group by m.member_desc having count(*) > 4 order by m.member_desc')
+    rs = db_.engine.execute(f'Select m.member_desc, count(*) as participations from public."Session" s JOIN public."Member" m  ON m.member_id = s.member_id where (Extract(Year from session_dt)) = {_year} and "isGuest" = FALSE group by m.member_desc having count(*) > 1 order by m.member_desc')
     dicts = []
     for row in rs:
         d = {}
