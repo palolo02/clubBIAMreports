@@ -104,7 +104,7 @@ function renderDetailedData(url){
         obj.forEach(function(row){
             trow = tableData.append("tr");
             Object.entries(row).forEach(([key, value]) => {
-                if(value == null)
+                if(value == null || value == 0)
                     trow.append("td").text('')
                 else if (key == 'Rol' || key == 'TipoRol')
                     trow.append("td").text(`${value}`).classed('name',true)
@@ -185,8 +185,12 @@ function renderRoleData(url){
         var layoutRole = {
             barmode: 'stack',
             title:'Por Tipo de Rol',
-            xaxis:{title:"Mes"},
-            yaxis:{title:"Participaciones",range: [0, 10]}
+            xaxis:{title:""},
+            yaxis:{title:"Participaciones",range: [0, 10]},
+            showlegend: true,
+            legend: {
+                "orientation":"h"
+            }
         };
           
         Plotly.newPlot('role', dataRole, layoutRole, {displayModeBar: false}, {responsive: true});
@@ -239,7 +243,7 @@ function renderYearlyData(url){
 
         var layoutTable = {
             title:'Participaciones en el año',
-            xaxis:{title:"Mes"},
+            xaxis:{title:""},
             yaxis:{title:"Participaciones", range: [0, 10]}
         };
           

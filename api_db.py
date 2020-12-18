@@ -25,7 +25,7 @@ connection = Config.SQLALCHEMY_DATABASE_URI
 
 
 def getAllResults(_member,_year,db_):
-    rs = db_.engine.execute(f'Select  m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  count(*) as NoPart  from public."Session" s  JOIN public."Member" m  ON m.member_id = s.member_id  where m.member_desc like \'{_member}\'  and (Extract(Year from session_dt)) = {_year}  and "isGuest" = FALSE  group by (Extract(Year from session_dt)),  (Extract(Month from session_dt)),  m.member_desc ')
+    rs = db_.engine.execute(f'SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(NoPart,0) FROM ( 	SELECT   	m.member_desc,   	(Extract(Year from session_dt)) as Anio,   	(Extract(Month from session_dt)) as Mes,   	count(*) as NoPart   	FROM public."Session" s   	JOIN public."Member" m   		ON m.member_id = s.member_id   	WHERE m.member_desc like \'{_member}\'  	AND (Extract(Year from session_dt)) = {_year}   	AND "isGuest" = FALSE   	GROUP BY (Extract(Year from session_dt)),   	(Extract(Month from session_dt)),   	m.member_desc  ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year}    ')
     dicts = []
     for row in rs:
         d = {}
@@ -39,7 +39,7 @@ def getAllResults(_member,_year,db_):
 
 
 def getResultsPerMember(_member,_year, db_):
-    rs = db_.engine.execute(f'Select  m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  rt.role_type_desc,  count(*) as NoPart  from public."Session" s  JOIN public."Member" m  ON m.member_id = s.member_id  JOIN public."Role" r  ON r.role_id = s.role_id  JOIN public."Role_Type" rt  ON r.role_type_id = rt.role_type_id  where m.member_desc = \'{_member}\'  and (Extract(Year from session_dt)) = {_year}  and "isGuest" = FALSE  group by (Extract(Year from session_dt)),  (Extract(Month from session_dt)),  rt.role_type_desc,  m.member_desc ')
+    rs = db_.engine.execute(f'SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(role_type_desc,\'Comunicador\'), COALESCE(NoPart,0) FROM ( 	Select  m.member_desc,   	(Extract(Year from session_dt)) as Anio,   	(Extract(Month from session_dt)) as Mes,   	rt.role_type_desc,   	count(*) as NoPart   	from public."Session" s   	JOIN public."Member" m   		ON m.member_id = s.member_id   	JOIN public."Role" r   		ON r.role_id = s.role_id   	JOIN public."Role_Type" rt   		ON r.role_type_id = rt.role_type_id   	WHERE m.member_desc = \'{_member}\'  	AND (Extract(Year from session_dt)) = {_year}   	AND "isGuest" = FALSE   	GROUP BY (Extract(Year from session_dt)),   	(Extract(Month from session_dt)),   	rt.role_type_desc,   	m.member_desc  ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year}    ')
     dicts = []
     for row in rs:
         d = {}
@@ -70,7 +70,6 @@ def getDetailedResultsPerMember(_member,_year, db_):
     results.loc[:,'Total'] = results.sum(axis=1)
     #results.sort_values(by='Total',ascending=False,inplace=True)
     results.reset_index(inplace=True)
-    print(results)
     #results.rename(columns={'member_desc':'Socios'}, inplace=True)
     return results
 
