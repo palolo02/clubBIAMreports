@@ -1,58 +1,35 @@
-#################################################
-# Import Modules
-#################################################
-
 from flask import Flask, Response
 from flask import render_template
 from flask import redirect
 from flask import jsonify
 from flask import request
-#from flask import current_app as app
-import pandas as pd
+from . import main
 import json
-import api_db
-
-# Modules needed
-import pandas as pd
-import numpy as np
-
-#import sqlalchemy
-from flask_sqlalchemy import SQLAlchemy
-from credentials import Config
-
-import os
-import glob
-import datetime
-import calendar
-
-#################################################
-# DB Connection
-#################################################
-app = Flask(__name__, instance_relative_config=False)
-app.config.from_object('credentials.Config')
-db = SQLAlchemy(app)
-
+from .. import api_db 
+from .. import db
 
 
 #################################################
 # Flask Routes
 #################################################
-@app.route("/")
+
+@main.route("/")
+#@app.route("/")
 def home():
     print("======================================")
     return render_template("index.html")
 
-@app.route("/year")
+@main.route("/year")
 def year():
     print("======================================")
     return render_template("year.html")
 
-@app.route("/overview")
+@main.route("/overview")
 def overview():
     print("======================================")
     return render_template("overview.html")
 
-@app.route("/member")
+@main.route("/member")
 def member():
     print("======================================")
     return render_template("member.html")
@@ -61,61 +38,56 @@ def member():
 # Flask API
 #################################################
 
-@app.route("/api/v1/getResultsPerDateRange/<year_>/<month_>",methods=["GET"])
+@main.route("/api/v1/getResultsPerDateRange/<int:year_>/<int:month_>",methods=['GET', 'POST'])
 def resultsPerDateRange(year_,month_):
     json_results = api_db.getResultsPerDateRange(int(year_),int(month_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getStatsPerDateRange/<year_>/<month_>",methods=["GET"])
+@main.route("/api/v1/getStatsPerDateRange/<int:year_>/<int:month_>",methods=['GET', 'POST'])
 def statisticsPerDateRange(year_,month_):
     json_results = api_db.getStatsPerDateRange(int(year_),int(month_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getStatsPerYear/<year_>",methods=["GET"])
+@main.route("/api/v1/getStatsPerYear/<int:year_>",methods=['GET', 'POST'])
 def statisticsPerYear(year_):
     json_results = api_db.getStatsPerYear(int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getStatsPerClub/<year_>",methods=["GET"])
+@main.route("/api/v1/getStatsPerClub/<int:year_>",methods=['GET', 'POST'])
 def statisticsPerClub(year_):
     json_results = api_db.getStatsPerClub(int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getStatsPerSessionType/<year_>",methods=["GET"])
+@main.route("/api/v1/getStatsPerSessionType/<int:year_>",methods=['GET', 'POST'])
 def statisticsPerSessionType(year_):
     json_results = api_db.getStatsPerSessionType(int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getAllResults/<member_>/<year_>",methods=["GET"])
+@main.route("/api/v1/getAllResults/<member_>/<int:year_>",methods=['GET', 'POST'])
 def resultsAllResults(member_,year_):
     json_results = api_db.getAllResults(member_,int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getRoleResults/<member_>/<year_>",methods=["GET"])
+@main.route("/api/v1/getRoleResults/<member_>/<int:year_>",methods=['GET', 'POST'])
 def resultsRoleResults(member_,year_):
     json_results = api_db.getResultsPerMember(member_,int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getDetailedResults/<member_>/<year_>",methods=["GET"])
+@main.route("/api/v1/getDetailedResults/<member_>/<int:year_>",methods=['GET', 'POST'])
 def resultsDetailedResults(member_,year_):
     json_results = api_db.getDetailedResultsPerMember(member_,int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
 
-@app.route("/api/v1/getActiveMembers/<year_>",methods=["GET"])
+@main.route("/api/v1/getActiveMembers/<int:year_>",methods=['GET', 'POST'])
 def resultsActiveMembers(year_):
     json_results = api_db.getActiveMembers(int(year_),db)
     json_results = json_results.to_json()
     return jsonify(json_results)
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

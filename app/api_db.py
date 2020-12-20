@@ -1,27 +1,21 @@
 # Modules needed
 import pandas as pd
 import numpy as np
-
-from flask_sqlalchemy import SQLAlchemy
-
-
+#from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
-
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func, inspect, and_
-
-
 import os
 import glob
 import datetime
 import calendar
 
 # import variables from config file
-from credentials import Config
+from config import appConfig
 
-connection = Config.SQLALCHEMY_DATABASE_URI
+connection = appConfig['default'].SQLALCHEMY_DATABASE_URI
 
 
 def getAllResults(_member,_year,db_):
