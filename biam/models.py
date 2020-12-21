@@ -1,3 +1,6 @@
+from flask_login import UserMixin
+import flask_sqlalchemy
+from . import login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
@@ -16,11 +19,11 @@ class UserRole(db.Model):
 
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'User'
     user_id = db.Column(db.Integer, primary_key=True)
     user_desc = db.Column(db.String(64), unique=True, index=True)
-    name = db.Column(db.String(64), unique=True, index=True)
+    name = db.Column(db.String(64), unique=False, index=True)
     password_hash = db.Column(db.String(128))
     user_role_id = db.Column(db.SmallInteger, db.ForeignKey('UserRole.user_role_id'))    
     is_active = db.Column(db.Boolean)
@@ -40,3 +43,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

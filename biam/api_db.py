@@ -17,6 +17,14 @@ from config import appConfig
 
 connection = appConfig['default'].SQLALCHEMY_DATABASE_URI
 
+# Get user from user id
+def getUserFromId(_user_id, db_):
+    rs = db_.engine_execute(f'SELECT *  FROM public."Member" WHERE user_id = {_user_id}')
+    user = {}
+    for row in rs:
+        user['id'] = row[0]
+        user['name'] = row[1]
+    return user
 
 def getAllResults(_member,_year,db_):
     rs = db_.engine.execute(f'SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(NoPart,0) FROM ( 	SELECT   	m.member_desc,   	(Extract(Year from session_dt)) as Anio,   	(Extract(Month from session_dt)) as Mes,   	count(*) as NoPart   	FROM public."Session" s   	JOIN public."Member" m   		ON m.member_id = s.member_id   	WHERE m.member_desc like \'{_member}\'  	AND (Extract(Year from session_dt)) = {_year}   	AND "isGuest" = FALSE   	GROUP BY (Extract(Year from session_dt)),   	(Extract(Month from session_dt)),   	m.member_desc  ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year}    ')
