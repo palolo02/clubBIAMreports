@@ -145,6 +145,7 @@ pyflakes==2.2.0
 Pygments==2.6.1
 pylint==2.5.3
 pylint-flask==0.6
+pylint-flask-sqlalchemy==0.2.0
 pylint-plugin-utils==0.6
 pyodbc==4.0.0-unsupported
 pyOpenSSL==19.1.0
