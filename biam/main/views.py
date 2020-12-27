@@ -4,6 +4,7 @@ from flask import redirect
 from flask import jsonify
 from flask import request
 from . import main
+from flask_login import login_required
 import json
 from .. import api_db 
 from .. import db
@@ -14,22 +15,25 @@ from .. import db
 #################################################
 
 @main.route("/")
-#@app.route("/")
+@login_required
 def home():
     print("======================================")
     return render_template("index.html")
 
 @main.route("/year")
+@login_required
 def year():
     print("======================================")
     return render_template("year.html")
 
 @main.route("/overview")
+@login_required
 def overview():
     print("======================================")
     return render_template("overview.html")
 
 @main.route("/member")
+#@login_required
 def member():
     print("======================================")
     return render_template("member.html")

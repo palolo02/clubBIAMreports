@@ -1,9 +1,8 @@
-from flask_login import UserMixin
-import flask_sqlalchemy
-from . import login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
-from . import db
+from flask_login import UserMixin
+from . import db, login_manager
 
+print('Loading Models')
 
 class UserRole(db.Model):
     __tablename__ = 'UserRole'
@@ -42,8 +41,9 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.user_desc
+
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.query.filter_by(alternative_id=int(user_id)).first()
