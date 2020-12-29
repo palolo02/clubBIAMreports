@@ -14,7 +14,7 @@ class UserRole(db.Model):
     update_dt = db.Column(db.Date)
 
     def __repr__(self):
-        return '<UserRole %r>' % self.name
+        return '<UserRole %r>' % self.user_role_desc
 
 
 
@@ -43,7 +43,10 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.user_desc
 
+    def get_id(self):
+        return self.user_id
+
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.filter_by(alternative_id=int(user_id)).first()
+    return User.query.filter_by(user_id=int(user_id)).first()

@@ -33,14 +33,14 @@ def overview():
     return render_template("overview.html")
 
 @main.route("/member")
-#@login_required
+@login_required
 def member():
     print("======================================")
     return render_template("member.html")
 
 #################################################
 # Flask API
-#################################################
+#################/################################
 
 @main.route("/api/v1/getResultsPerDateRange/<int:year_>/<int:month_>",methods=['GET', 'POST'])
 def resultsPerDateRange(year_,month_):

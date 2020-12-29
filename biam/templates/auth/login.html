@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% from 'bootstrap/form.html' import render_form %}
+
 
 {% block title %}BIAM - Login{% endblock %}
 
@@ -8,7 +9,7 @@
     <h1>Login</h1>
 </div>
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
+    {{ render_form(form) }}
     <br>
     <p>Forgot your password? <a href="">Click here to reset it</a>.</p>
     <p>New user? <a href="">Click here to register</a>.</p>
