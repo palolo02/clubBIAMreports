@@ -54,7 +54,7 @@ function rendertable(url){
         maxTotal = Math.max.apply(Math, obj.map(o => o['Total']))
         // Add table data in HTML
         data = d3.select(".data");
-        
+        d3.select("#table_results table").classed("table-biam", true)
         // Iterate over each header
         header = data.append("tr")
         keys.forEach(function(h){
@@ -97,7 +97,7 @@ function renderStats(url){
         console.log(keys);
         console.log(values);
         // Add table data in HTML
-        participations = d3.select(".kpi_part").text(values[1]);
+        //participations = d3.select(".kpi_part").text(values[1]);
         members = d3.select(".kpi_memb").text(values[2]);
         sessions = d3.select(".kpi_sess").text(values[3]);
     }); 

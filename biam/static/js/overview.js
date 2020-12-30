@@ -38,6 +38,7 @@ function renderTableClub(url){
     
         // Add table data in HTML
         data = d3.select("#table_results table .data");
+        d3.select("#table_results table").classed("table-biam", true)
         //For row in results add all the column
         for (i=0; i< values[0].length;i++){
             trow = data.append("tr");

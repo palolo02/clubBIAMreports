@@ -2,6 +2,10 @@
   background-color:#722431;
 }
 
+.navbar-dark span{
+  color: white;
+  padding-top: 9px;
+}
 
 
 
@@ -16,6 +20,18 @@
   vertical-align: middle;
   font-size: small;
 }
+
+.table-biam{
+  text-align: center;
+}
+
+.table-biam tbody tr td,
+.table-biam thead tr th,
+.table-biam thead {
+  border-left: 1px solid #EDF2F4;
+  border-right: 1px solid #EDF2F4;
+}
+/* #EDF2F4*/
 
 #table_results .table .data td.name {  
   font-size: medium;
@@ -50,8 +66,7 @@
 }
 
 .kpi_val{
-  background-color: #00274B;
-  color: white;
+  color: #00274B;
   border-radius: 50%;
   font-weight: bold;
   font-size: 40px;
@@ -64,7 +79,7 @@
 /*
 .b100 { background-color: #03045E; color:white}
 .b75 { background-color: #0077B6; color:white}
-.b50 { background-color: #0096C7; color:white}
+.b50 todo{ background-color: #0096C7; color:white}
 .b25 { background-color: #00B4D8; color:white}
 .b0 { background-color: #90E0EF; color:black}
 */
@@ -76,10 +91,10 @@
 .b25 { background-color: #9AD1D4; color:white}
 .b0 { background-color: #CCDBDC; color:black}
 */
-.b100 { background-color: #EF6351; color:white}
-.b75 { background-color: #F38375; color:white}
-.b50 { background-color: #F7A399; color:white}
-.b25 { background-color: #FBC3BC; color:white}
+.b100 { background-color: #EF6351; color:black}
+.b75 { background-color: #F38375; color:black}
+.b50 { background-color: #F7A399; color:black}
+.b25 { background-color: #FBC3BC; color:black}
 .b0 { background-color: #FFE3E0; color:black}
 
 .total{background-color: #E5E5E5;}

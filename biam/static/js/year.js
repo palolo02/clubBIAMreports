@@ -37,7 +37,7 @@ function renderTableYear(url){
 
         // Add table data in HTML
         data = d3.select(".data");
-        
+        d3.select("#table_results table").classed("table-biam", true)
         // Iterate over each header
         header = data.append("tr")
         keys.forEach(function(h){

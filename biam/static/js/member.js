@@ -2,7 +2,8 @@
 loadMembers();
 
 // Stack bars colors
-var colors = ['#722431','#317224','#243172']
+//var colors = ['#722431','#317224','#243172']
+var colors = ['#00274B','#008190','#00AF8E']
 var chooseColor = 0;
 
 function loadMembers(){
@@ -16,9 +17,9 @@ function loadMembers(){
         values = d3.values(schema)
         // Get only values from result        
         values = values.map(d => d3.values(d))
-        console.log(values[1])
+        //console.log(values[1])
         values[1].forEach(function(v){
-            console.log(v);
+            //console.log(v);
             d3.select("#selMember").append("option").attr('value',v).text(v)
         });
         //Initialize components
@@ -85,7 +86,7 @@ function renderDetailedData(url){
 
         // Get table element to render data
         var tableData = d3.select(".data");
-
+        d3.select("#table_results table").classed("table-biam", true)
         // Remove all content from table
         tableData.selectAll("*").remove()
         d3.select(".header").selectAll("*").remove()
@@ -184,10 +185,12 @@ function renderRoleData(url){
           
         var layoutRole = {
             barmode: 'stack',
-            title:'Por Tipo de Rol',
+            title:'Participaciones por Tipo de Rol',
             xaxis:{title:""},
             yaxis:{title:"Participaciones",range: [0, 10]},
             showlegend: true,
+            hovermode: false,
+            hoverinfo: 'skip',
             legend: {
                 "orientation":"h"
             }
@@ -206,7 +209,7 @@ function renderYearlyData(url){
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
-        console.log(schema)
+        //console.log(schema)
         //console.log(schema)       
         // Get keys and values from dataframe
         keys = d3.keys(schema)
@@ -242,9 +245,11 @@ function renderYearlyData(url){
         var dataPoints = [traceLineTable];
 
         var layoutTable = {
-            title:'Participaciones en el año',
+            title:'Asistencias en el año',
+            hovermode: false,
+            hoverinfo: 'skip',
             xaxis:{title:""},
-            yaxis:{title:"Participaciones", range: [0, 10]}
+            yaxis:{title:"Asistencias", range: [0, 10]}
         };
           
         Plotly.newPlot('yearly', dataPoints, layoutTable, {displayModeBar: false}, {responsive: true});
