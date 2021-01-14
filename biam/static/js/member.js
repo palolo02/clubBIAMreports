@@ -5,6 +5,8 @@ loadMembers();
 //var colors = ['#722431','#317224','#243172']
 var colors = ['#00274B','#008190','#00AF8E']
 var chooseColor = 0;
+var member;
+var year;
 
 function loadMembers(){
     var url = `/api/v1/getActiveMembers/2020`;
@@ -30,6 +32,8 @@ function loadMembers(){
 // Function to initialize graphs on webpage
 function init(){
     option = d3.select("#selMember").property("value");
+    member = option
+    year = 2020
     option = option.replace(" ","%20")
     url_detailed_data = `/api/v1/getDetailedResults/${option}/2020`;
     url_role_data = `/api/v1/getRoleResults/${option}/2020`
@@ -48,13 +52,15 @@ function loadMemberEvent(){
 
     d3.select("#selMember").on("change",function(){
         option = d3.select("#selMember").property("value");
+        member = option
+        year = 2020
         option = option.replace(" ","%20");
         url_detailed_data = `/api/v1/getDetailedResults/${option}/2020`;
         renderDetailedData(url_detailed_data);
         url_role_data = `/api/v1/getRoleResults/${option}/2020`
         renderRoleData(url_role_data);
         url_data = `/api/v1/getAllResults/${option}/2020`
-        renderYearlyData(url_data);        
+        renderYearlyData(url_data); 
     });
 }
 
@@ -148,52 +154,69 @@ function renderRoleData(url){
             }
             obj.push(temp)
         }
-        //console.log(obj)
-
-       
-        roles = [];
-        maps = new Map();
-        for (const item of obj.map(o => o['TipoRol'])) {
-            if(!maps.has(item)){
-                maps.set(item, true);    // set any value to Map
-            roles.push(item);
-            }
-        }
-        
-        
-        var dataRole = []
-        roles.forEach(function(role){
-            rows = obj.filter(row => row['TipoRol'] == role);
-            dataRole.push({
-                x: getMonths(rows.map(r => r['Mes'])),
-                y: rows.map(r => r['NoParticipaciones']),
-                text: rows.map(r => r['NoParticipaciones']),
+        console.log(obj)
+        var dataRole = [
+            {
+                x: obj.map(r => r['Perc']),
+                y: obj.map(r => r['TipoRol']),
+                text: obj.map(r => { return r['Perc'] + ' %'}),
                 textposition: 'auto',
-                name: role,
                 type: 'bar',
+                orientation:"h",
+                name: role,
                 marker: {
-                    color: colors[chooseColor],
+                    color: colors[1],
                     line: {
-                      color: colors[chooseColor]
+                      color: colors[1]
                     }
                   }
-              });
-            chooseColor++;
-        })
-        chooseColor = 0;
-        //
+              }
+        ]
           
         var layoutRole = {
             barmode: 'stack',
-            title:'Participaciones por Tipo de Rol',
-            xaxis:{title:""},
-            yaxis:{title:"Participaciones",range: [0, 10]},
-            showlegend: true,
+            //title:'Participaciones por Tipo de Rol',
+            xaxis:{title:"% Participaciones", 
+                showgrid: false
+            },
+            yaxis:{
+                showgrid: false,
+                automargin: true,
+            },
             hovermode: false,
             hoverinfo: 'skip',
-            legend: {
-                "orientation":"h"
-            }
+            annotations: [
+                {
+                  xref: 'paper',
+                  yref: 'paper',
+                  x: 0.0,
+                  y: 1.05,
+                  xanchor: 'left',
+                  yanchor: 'bottom',
+                  text: 'Participaciones por Tipo de Rol',
+                  font:{
+                    family: 'Arial',
+                    size: 30,
+                    color: 'rgb(37,37,37)'
+                  },
+                  showarrow: false
+                },
+                {
+                  xref: 'paper',
+                  yref: 'paper',
+                  x: 0,
+                  y: -0.1,
+                  xanchor: 'left',
+                  yanchor: 'top',
+                  text: `Porcentaje de participaciones que tiene ${member} en ${year}`,
+                  showarrow: false,
+                  font: {
+                    family: 'Arial',
+                    size: 12,
+                    color: 'rgb(150,150,150)'
+                  }
+                }
+              ]
         };
           
         Plotly.newPlot('role', dataRole, layoutRole, {displayModeBar: false}, {responsive: true});
@@ -229,27 +252,70 @@ function renderYearlyData(url){
         var traceLineTable = {
             x: getMonths(results.map(r => r['Mes'])),
             y: results.map(r => r['NoParticipaciones']),
-            text: results.map(r => r['NoParticipaciones']),
-            textposition: 'top',
-            mode: 'lines+markers+text',
+            // Enable data values on graph
+            //text: results.map(r => r['NoParticipaciones']),
+            //textposition: 'top',
+            //mode: 'lines+markers+text',
+            mode: 'lines',
             name: 'Participaciones',
-            type: 'scatter',
+            type: 'scatter'
+            /*
             marker: {
-                color: '#00274B',
+                //color: '#00274B',
                 line: {
                   color: '#00274B'
                 }
               },
+            */
         };
         
         var dataPoints = [traceLineTable];
 
         var layoutTable = {
-            title:'Asistencias en el año',
+            //title:'Asistencias en el año',
             hovermode: false,
             hoverinfo: 'skip',
-            xaxis:{title:""},
-            yaxis:{title:"Asistencias", range: [0, 10]}
+            xaxis:{
+                title:"", 
+                showgrid: false
+            },
+            yaxis:{
+                title:"Asistencias", 
+                range: [0, 10],
+                showgrid: false
+            },
+            annotations: [
+                {
+                  xref: 'paper',
+                  yref: 'paper',
+                  x: 0.0,
+                  y: 1.05,
+                  xanchor: 'left',
+                  yanchor: 'bottom',
+                  text: 'Asistencias en el año',
+                  font:{
+                    family: 'Arial',
+                    size: 30,
+                    color: 'rgb(37,37,37)'
+                  },
+                  showarrow: false
+                },
+                {
+                  xref: 'paper',
+                  yref: 'paper',
+                  x: 0,
+                  y: -0.1,
+                  xanchor: 'left',
+                  yanchor: 'top',
+                  text: `Participaciones que tiene ${member} en ${year}`,
+                  showarrow: false,
+                  font: {
+                    family: 'Arial',
+                    size: 12,
+                    color: 'rgb(150,150,150)'
+                  }
+                }
+              ]
         };
           
         Plotly.newPlot('yearly', dataPoints, layoutTable, {displayModeBar: false}, {responsive: true});

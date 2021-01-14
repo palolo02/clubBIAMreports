@@ -42,22 +42,24 @@ def getAllResults(_member,_year,db_):
 
 
 def getResultsPerMember(_member,_year, db_):
-    rs = db_.engine.execute(f' SELECT COALESCE(member_desc,\'{_member}\'),  yr, mm,   srs.role_type_desc, COALESCE(NoPart,0)  FROM (         Select  m.member_desc,           (Extract(Year from session_dt)) as Anio,         (Extract(Month from session_dt)) as Mes,         rt.role_type_desc,           count(*) as NoPart           from public."Session" s          JOIN public."Member" m                   ON m.member_id = s.member_id         JOIN public."Role" r                 ON r.role_id = s.role_id         JOIN public."Role_Type" rt                   ON r.role_type_id = rt.role_type_id          WHERE m.member_desc = \'{_member}\'     AND (Extract(Year from session_dt)) = {_year}            AND "isGuest" = FALSE            GROUP BY (Extract(Year from session_dt)),            (Extract(Month from session_dt)),            rt.role_type_desc,           m.member_desc   ) dta  RIGHT OUTER JOIN (     SELECT yr, mm, role_type_desc     FROM period_vw     CROSS JOIN public."Role_Type" ) srs     ON srs.yr = Anio         AND srs.mm = Mes      AND srs.role_type_desc = dta.role_type_desc     WHERE srs.yr = {_year}       ')
+    rs = db_.engine.execute(f' Select  rt.role_type_desc,  count(*) as NoPart  from public."Session" s   JOIN public."Member" m  	ON m.member_id = s.member_id  JOIN public."Role" r  	ON r.role_id = s.role_id   JOIN public."Role_Type" rt   	ON r.role_type_id = rt.role_type_id  WHERE m.member_desc = \'{_member}\'      AND (Extract(Year from session_dt)) = {_year}  AND "isGuest" = FALSE  GROUP BY  rt.role_type_desc order by count(*) asc        ')
     dicts = []
     for row in rs:
         d = {}
-        d['Socio'] = row[0]
-        d['Año'] = row[1]
-        d['Mes'] = row[2]
-        d['TipoRol'] = row[3]
-        d['NoParticipaciones'] = row[4]
+        d['TipoRol'] = row[0]
+        d['NoParticipaciones'] = row[1]
         dicts.append(d)
     results = pd.DataFrame(dicts)
+    # Calculate percentages
+    total = sum(results['NoParticipaciones'])
+    results["Perc"] = results['NoParticipaciones'] / total*100
+    results['Perc'] = results['Perc'].round(2)
     return results
 
 # Get information for each member
 def getDetailedResultsPerMember(_member,_year, db_):
-    rs = db_.engine.execute(f' SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(role_desc,\'Evaluador\'), COALESCE(role_type_desc,\'Equipo Evaluación\'), COALESCE(NoPart,0) FROM ( 	SELECT m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  r.role_desc,  rt.role_type_desc,  COUNT(*) as NoPart  FROM public."Session" s  LEFT JOIN public."Member" m  	ON m.member_id = s.member_id  LEFT JOIN public."Role" r  	ON r.role_id = s.role_id  LEFT JOIN public."Role_Type" rt  	ON r.role_type_id = rt.role_type_id  WHERE  (Extract(Year from session_dt)) = {_year} AND m.member_desc = \'{_member}\'  GROUP BY (Extract(Year from session_dt)), (Extract(Month from session_dt)), r.role_desc, rt.role_type_desc, m.member_desc ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year} ')
+    rs = db_.engine.execute(f' SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(role_type_desc,\'Equipo Evaluación\'), COALESCE(NoPart,0) FROM ( 	SELECT m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  r.role_desc,  rt.role_type_desc,  COUNT(*) as NoPart  FROM public."Session" s  LEFT JOIN public."Member" m  	ON m.member_id = s.member_id  LEFT JOIN public."Role" r  	ON r.role_id = s.role_id  LEFT JOIN public."Role_Type" rt  	ON r.role_type_id = rt.role_type_id  WHERE  (Extract(Year from session_dt)) = {_year} AND m.member_desc = \'{_member}\'  GROUP BY (Extract(Year from session_dt)), (Extract(Month from session_dt)), r.role_desc, rt.role_type_desc, m.member_desc ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year} ')
+    #rs = db_.engine.execute(f' SELECT COALESCE(member_desc,\'{_member}\'), yr, mm,  COALESCE(role_desc,\'Evaluador\'), COALESCE(role_type_desc,\'Equipo Evaluación\'), COALESCE(NoPart,0) FROM ( 	SELECT m.member_desc,  (Extract(Year from session_dt)) as Anio,  (Extract(Month from session_dt)) as Mes,  r.role_desc,  rt.role_type_desc,  COUNT(*) as NoPart  FROM public."Session" s  LEFT JOIN public."Member" m  	ON m.member_id = s.member_id  LEFT JOIN public."Role" r  	ON r.role_id = s.role_id  LEFT JOIN public."Role_Type" rt  	ON r.role_type_id = rt.role_type_id  WHERE  (Extract(Year from session_dt)) = {_year} AND m.member_desc = \'{_member}\'  GROUP BY (Extract(Year from session_dt)), (Extract(Month from session_dt)), r.role_desc, rt.role_type_desc, m.member_desc ) dta RIGHT OUTER JOIN period_vw srs 	ON srs.yr = Anio 	AND srs.mm = Mes WHERE srs.yr = {_year} ')
     dicts = []
     for row in rs:
         d = {}
@@ -65,11 +67,12 @@ def getDetailedResultsPerMember(_member,_year, db_):
         d['Año'] = row[1]
         d['Mes'] = row[2]
         d['TipoRol'] = row[3]
-        d['Rol'] = row[4]
-        d['Participaciones'] = row[5]
+        #d['Rol'] = row[4]
+        d['Participaciones'] = row[4]
         dicts.append(d)
     results = pd.DataFrame(dicts)
-    results = results.pivot_table(values='Participaciones',index=[results.Rol,results.TipoRol],columns='Mes',aggfunc='sum', dropna=True)
+    results = results.pivot_table(values='Participaciones',index=[results.TipoRol],columns='Mes',aggfunc='sum', dropna=True)
+    #results = results.pivot_table(values='Participaciones',index=[results.Rol,results.TipoRol],columns='Mes',aggfunc='sum', dropna=True)
     results.loc[:,'Total'] = results.sum(axis=1)
     #results.sort_values(by='Total',ascending=False,inplace=True)
     results.reset_index(inplace=True)
@@ -123,30 +126,36 @@ def getStatsPerDateRange(year_, month_, db_):
 
 # Get all the accumulated stats for only members in the club
 def getStatsPerYear(year_,db_):
-    rs = db_.engine.execute(f'Select m.member_id, m.member_desc, rt.role_type_desc, count(*) as NoParticipations FROM public."Session" s JOIN public."Member" m On m.member_id = s.member_id JOIN public."Role" r On s.role_id = r.role_id JOIN public."Role_Type" rt On r.role_type_id = rt.role_type_id where extract(year from (session_dt)) = {year_} and "isGuest" = FALSE group by m.member_id, m.member_desc, rt.role_type_desc order by m.member_id, count(*) desc ')
-    dicts = []
-    for row in rs:
-        d = {}
-        d['member_id'] = row[0]
-        d['member_desc'] = row[1]
-        d['role_type_desc'] = row[2]
-        d['NoParticipations'] = row[3]
-        dicts.append(d)
+    try:
+        rs = db_.engine.execute(f'Select m.member_id, m.member_desc, rt.role_type_desc, count(*) as NoParticipations FROM public."Session" s JOIN public."Member" m On m.member_id = s.member_id JOIN public."Role" r On s.role_id = r.role_id JOIN public."Role_Type" rt On r.role_type_id = rt.role_type_id where extract(year from (session_dt)) = {year_} and "isGuest" = FALSE group by m.member_id, m.member_desc, rt.role_type_desc order by m.member_id, count(*) desc ')
+        dicts = []
+        for row in rs:
+            d = {}
+            d['member_id'] = row[0]
+            d['member_desc'] = row[1]
+            d['role_type_desc'] = row[2]
+            d['NoParticipations'] = row[3]
+            dicts.append(d)
 
-    results = pd.DataFrame(dicts)
-    results = results.pivot_table(values='NoParticipations',index=[results.member_desc],columns='role_type_desc',aggfunc='sum', dropna=True)
-    results['Total'] = results.sum(axis=1)
-    results['Com %'] = (results['Comunicador'] / results['Total'])*100
-    results['Com %'] = results['Com %'].round(0)
-    results['Eva %'] = (results['Equipo Evaluación'] / results['Total'])*100
-    results['Eva %'] = results['Eva %'].round(0)
-    results['Lid %'] = (results['Liderazgo'] / results['Total'])*100
-    results['Lid %'] = results['Lid %'].round(0)
-    results.sort_values(by='Total',ascending=False,inplace=True)
-    results.reset_index(inplace=True)
-    results = results[['member_desc','Comunicador','Com %','Equipo Evaluación','Eva %','Liderazgo','Lid %','Total']]
-    results.rename(columns={'role_type_desc':'Rol'}, inplace=True)
-    results.rename(columns={'member_desc':'Socios'}, inplace=True)
+        results = pd.DataFrame(dicts)
+        results = results.pivot_table(values='NoParticipations',index=[results.member_desc],columns='role_type_desc',aggfunc='sum', dropna=True)
+        results['Total'] = results.sum(axis=1)
+        results['Disc %'] = (results['Discurso'] / results['Total'])*100
+        results['Disc %'] = results['Disc %'].round(0)
+        results['Com %'] = (results['Comunicador'] / results['Total'])*100
+        results['Com %'] = results['Com %'].round(0)
+        results['Eva %'] = (results['Equipo Evaluación'] / results['Total'])*100
+        results['Eva %'] = results['Eva %'].round(0)
+        results['Lid %'] = (results['Liderazgo'] / results['Total'])*100
+        results['Lid %'] = results['Lid %'].round(0)
+        results.sort_values(by='Total',ascending=False,inplace=True)
+        results.reset_index(inplace=True)
+        results = results[['member_desc','Discurso','Disc %','Comunicador','Com %','Equipo Evaluación','Eva %','Liderazgo','Lid %','Total']]
+        results.rename(columns={'role_type_desc':'Rol'}, inplace=True)
+        results.rename(columns={'member_desc':'Socios'}, inplace=True)
+    # No available results
+    except AttributeError:
+        results = {}
     return results
 
 # get monthly stats per club for only members of BIAM club

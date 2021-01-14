@@ -4,9 +4,22 @@ console.log('Loading data for year');
 init();
 
 function init(){
+    loadMemberEvent();
     url_data = '/api/v1/getStatsPerYear/2020';
     renderTableYear(url_data);
     
+    
+}
+
+// Function to attach a listener event when the dropdown year selection changes
+function loadMemberEvent(){
+
+    d3.select("#selYear").on("change",function(){
+        option = d3.select("#selYear").property("value");
+        url_detailed_data = `/api/v1/getStatsPerYear/${option}`;
+        console.log(url_detailed_data)
+        renderTableYear(url_detailed_data);
+    });
 }
 
 
@@ -38,6 +51,8 @@ function renderTableYear(url){
         // Add table data in HTML
         data = d3.select(".data");
         d3.select("#table_results table").classed("table-biam", true)
+        // Remove all content from table
+        data.selectAll("*").remove()
         // Iterate over each header
         header = data.append("tr")
         keys.forEach(function(h){
