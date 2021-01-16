@@ -46,7 +46,7 @@
 }
 
 .filter{
-  margin: 25px 0;
+  margin: 18px 0;
 }
 
 /* ======== KPIS section  ============*/
@@ -84,22 +84,24 @@
 .b0 { background-color: #90E0EF; color:black}
 */
 
-/* Blue
-.b100 { background-color: #003249; color:white}
-.b75 { background-color: #007EA7; color:white}
-.b50 { background-color: #80CED7; color:white}
-.b25 { background-color: #9AD1D4; color:white}
-.b0 { background-color: #CCDBDC; color:black}
-*/
+ /*Blue*/
+.b100 { background-color: #005D8F; color:black}
+.b75 { background-color: #006AA3; color:black}
+.b50 { background-color: #0092E0; color:black}
+.b25 { background-color: #47BFFF; color:black}
+.b0 { background-color: #99DBFF; color:black}
+
+/* Red
 .b100 { background-color: #EF6351; color:black}
 .b75 { background-color: #F38375; color:black}
 .b50 { background-color: #F7A399; color:black}
 .b25 { background-color: #FBC3BC; color:black}
 .b0 { background-color: #FFE3E0; color:black}
+*/
 
 .total{background-color: #E5E5E5;}
 
 /* Tables */
 th {
-  background-color: #852a39; color:white
+  background-color: #00274B; color:white
 }

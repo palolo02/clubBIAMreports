@@ -3,7 +3,7 @@ loadMembers();
 
 // Stack bars colors
 //var colors = ['#722431','#317224','#243172']
-var colors = ['#00274B','#008190','#00AF8E']
+var colors = ['#004468','#008190','#00AF8E']
 var chooseColor = 0;
 var member;
 var year;
@@ -165,23 +165,41 @@ function renderRoleData(url){
                 orientation:"h",
                 name: role,
                 marker: {
-                    color: colors[1],
+                    color: colors[0],
                     line: {
-                      color: colors[1]
+                      color: colors[0]
                     }
                   }
               }
         ]
           
         var layoutRole = {
-            barmode: 'stack',
+            //barmode: 'bar',
             //title:'Participaciones por Tipo de Rol',
-            xaxis:{title:"% Participaciones", 
-                showgrid: false
+            xaxis:{
+                title:"", 
+                side:'top',
+                showgrid: false,
+                tickfont: {
+                    family: 'Old Standard TT, serif',
+                    size: 10,
+                    color: 'gray'
+                },
+                ticksuffix: '%',
+                showline: true,
+                zeroline: false,
+                linecolor: 'lightgray'
             },
             yaxis:{
                 showgrid: false,
+                showline: false,
                 automargin: true,
+                tickfont: {
+                    family: 'Old Standard TT, serif',
+                    size: 14,
+                    color: 'gray'
+                }
+                
             },
             hovermode: false,
             hoverinfo: 'skip',
@@ -189,10 +207,10 @@ function renderRoleData(url){
                 {
                   xref: 'paper',
                   yref: 'paper',
-                  x: 0.0,
-                  y: 1.05,
+                  x: -0.3,
+                  y: 1.3,
                   xanchor: 'left',
-                  yanchor: 'bottom',
+                  yanchor: 'top',
                   text: 'Participaciones por Tipo de Rol',
                   font:{
                     family: 'Arial',
@@ -204,11 +222,11 @@ function renderRoleData(url){
                 {
                   xref: 'paper',
                   yref: 'paper',
-                  x: 0,
-                  y: -0.1,
+                  x: -0.3,
+                  y: 1.13,
                   xanchor: 'left',
                   yanchor: 'top',
-                  text: `Porcentaje de participaciones que tiene ${member} en ${year}`,
+                  text: `% de participaciones de ${member} en ${year}`,
                   showarrow: false,
                   font: {
                     family: 'Arial',
@@ -216,7 +234,10 @@ function renderRoleData(url){
                     color: 'rgb(150,150,150)'
                   }
                 }
-              ]
+            ],
+            margin:{
+                pad:0
+            }            
         };
           
         Plotly.newPlot('role', dataRole, layoutRole, {displayModeBar: false}, {responsive: true});
@@ -253,19 +274,17 @@ function renderYearlyData(url){
             x: getMonths(results.map(r => r['Mes'])),
             y: results.map(r => r['NoParticipaciones']),
             // Enable data values on graph
-            //text: results.map(r => r['NoParticipaciones']),
+            text: results.map(r => r['NoParticipaciones']),
             //textposition: 'top',
             //mode: 'lines+markers+text',
             mode: 'lines',
-            name: 'Participaciones',
-            type: 'scatter'
-            /*
-            marker: {
-                //color: '#00274B',
-                line: {
-                  color: '#00274B'
-                }
-              },
+            name: '',
+            type: 'scatter',
+            hovertemplate: '<b>Participaciones</b>: %{y:}' +
+                        '<br><b>Mes</b>: %{x}<br>'
+            /*hovertemplate: '<i>Participaciones</i>: $%{y:.2f}' +
+            '<br><b>Mes</b>: %{x}<br>' +
+            '<b>%{text}</b>'
             */
         };
         
@@ -273,25 +292,38 @@ function renderYearlyData(url){
 
         var layoutTable = {
             //title:'Asistencias en el año',
-            hovermode: false,
-            hoverinfo: 'skip',
+            hovermode: true,
+            //hoverinfo: 'skip',
             xaxis:{
-                title:"", 
-                showgrid: false
+                title:"Mes", 
+                showgrid: false,
+                tickfont: {
+                    family: 'Old Standard TT, serif',
+                    size: 12,
+                    color: 'gray'
+                }
+                
             },
             yaxis:{
-                title:"Asistencias", 
+                autotick: true,
+                linecolor: 'lightgray',
+                side:'left',
                 range: [0, 10],
-                showgrid: false
+                showgrid: false,
+                tickfont: {
+                    family: 'Old Standard TT, serif',
+                    size: 10,
+                    color: 'gray'
+                }
             },
             annotations: [
                 {
                   xref: 'paper',
                   yref: 'paper',
-                  x: 0.0,
-                  y: 1.05,
+                  x: -0.2,
+                  y: 1.3,
                   xanchor: 'left',
-                  yanchor: 'bottom',
+                  yanchor: 'top',
                   text: 'Asistencias en el año',
                   font:{
                     family: 'Arial',
@@ -303,11 +335,11 @@ function renderYearlyData(url){
                 {
                   xref: 'paper',
                   yref: 'paper',
-                  x: 0,
-                  y: -0.1,
+                  x: -0.2,
+                  y: 1.13,
                   xanchor: 'left',
                   yanchor: 'top',
-                  text: `Participaciones que tiene ${member} en ${year}`,
+                  text: `Participaciones de ${member} en ${year}`,
                   showarrow: false,
                   font: {
                     family: 'Arial',
