@@ -154,22 +154,29 @@ function renderRoleData(url){
             }
             obj.push(temp)
         }
-        console.log(obj)
+
+        noParticipaciones = obj.map(r => r['NoParticipaciones'])
+        
         var dataRole = [
             {
                 x: obj.map(r => r['Perc']),
                 y: obj.map(r => r['TipoRol']),
                 text: obj.map(r => { return r['Perc'] + ' %'}),
+                z: obj.map(r => { return r['NoParticipaciones'] + ' %'}),
                 textposition: 'auto',
                 type: 'bar',
                 orientation:"h",
-                name: role,
+                name: '',
                 marker: {
                     color: colors[0],
                     line: {
                       color: colors[0]
                     }
-                  }
+                }
+                /*
+                hovertemplate: '<b>% Participaciones</b>: %{x:}' +
+                        '<br><b>No Participaciones</b>:%{y}<br>'
+                */
               }
         ]
           
@@ -177,22 +184,11 @@ function renderRoleData(url){
             //barmode: 'bar',
             //title:'Participaciones por Tipo de Rol',
             xaxis:{
-                title:"", 
-                side:'top',
-                showgrid: false,
-                tickfont: {
-                    family: 'Old Standard TT, serif',
-                    size: 10,
-                    color: 'gray'
-                },
-                ticksuffix: '%',
-                showline: true,
-                zeroline: false,
-                linecolor: 'lightgray'
+                visible:false
             },
             yaxis:{
                 showgrid: false,
-                showline: false,
+                //showline: false,
                 automargin: true,
                 tickfont: {
                     family: 'Old Standard TT, serif',
@@ -211,7 +207,7 @@ function renderRoleData(url){
                   y: 1.3,
                   xanchor: 'left',
                   yanchor: 'top',
-                  text: 'Participaciones por Tipo de Rol',
+                  text: `Participaciones por Rol en ${year}`,
                   font:{
                     family: 'Arial',
                     size: 30,
@@ -222,11 +218,11 @@ function renderRoleData(url){
                 {
                   xref: 'paper',
                   yref: 'paper',
-                  x: -0.3,
+                  x: 0.0,
                   y: 1.13,
                   xanchor: 'left',
                   yanchor: 'top',
-                  text: `% de participaciones de ${member} en ${year}`,
+                  text: `% de participaciones en todo el año`,
                   showarrow: false,
                   font: {
                     family: 'Arial',
@@ -293,9 +289,10 @@ function renderYearlyData(url){
         var layoutTable = {
             //title:'Asistencias en el año',
             hovermode: true,
+            
             //hoverinfo: 'skip',
             xaxis:{
-                title:"Mes", 
+                title:"", 
                 showgrid: false,
                 tickfont: {
                     family: 'Old Standard TT, serif',
@@ -324,7 +321,7 @@ function renderYearlyData(url){
                   y: 1.3,
                   xanchor: 'left',
                   yanchor: 'top',
-                  text: 'Asistencias en el año',
+                  text: `Asistencias en ${year}`,
                   font:{
                     family: 'Arial',
                     size: 30,
@@ -335,11 +332,11 @@ function renderYearlyData(url){
                 {
                   xref: 'paper',
                   yref: 'paper',
-                  x: -0.2,
+                  x: -0.1,
                   y: 1.13,
                   xanchor: 'left',
                   yanchor: 'top',
-                  text: `Participaciones de ${member} en ${year}`,
+                  text: `Asistencias`,
                   showarrow: false,
                   font: {
                     family: 'Arial',
@@ -347,7 +344,7 @@ function renderYearlyData(url){
                     color: 'rgb(150,150,150)'
                   }
                 }
-              ]
+            ]
         };
           
         Plotly.newPlot('yearly', dataPoints, layoutTable, {displayModeBar: false}, {responsive: true});

@@ -85,8 +85,8 @@
 */
 
  /*Blue*/
-.b100 { background-color: #005D8F; color:black}
-.b75 { background-color: #006AA3; color:black}
+.b100 { background-color: #005D8F; color:white}
+.b75 { background-color: #006AA3; color:white}
 .b50 { background-color: #0092E0; color:black}
 .b25 { background-color: #47BFFF; color:black}
 .b0 { background-color: #99DBFF; color:black}
@@ -105,3 +105,19 @@
 th {
   background-color: #00274B; color:white
 }
+
+/* ======== Legend  ============*/
+.legend{
+  margin-right: 5px;
+  font-size: small;
+  color: darkgray;
+}
+
+.legend span{
+  width: 20px;
+  height: 5px;
+  padding: 5px; 
+  margin-right: 5px;
+}
+
+.row { margin: 0; padding: 0 }
