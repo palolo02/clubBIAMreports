@@ -33,11 +33,11 @@ function loadMembers(){
 function init(){
     option = d3.select("#selMember").property("value");
     member = option
-    year = 2020
+    year = d3.select("#selYear").property("value");
     option = option.replace(" ","%20")
-    url_detailed_data = `/api/v1/getDetailedResults/${option}/2020`;
-    url_role_data = `/api/v1/getRoleResults/${option}/2020`
-    url_data = `/api/v1/getAllResults/${option}/2020`
+    url_detailed_data = `/api/v1/getDetailedResults/${option}/${year}`;
+    url_role_data = `/api/v1/getRoleResults/${option}/${year}`
+    url_data = `/api/v1/getAllResults/${option}/${year}`
     
     renderDetailedData(url_detailed_data);
     renderYearlyData(url_data);
@@ -53,15 +53,29 @@ function loadMemberEvent(){
     d3.select("#selMember").on("change",function(){
         option = d3.select("#selMember").property("value");
         member = option
-        year = 2020
+        year = d3.select("#selYear").property("value");
         option = option.replace(" ","%20");
-        url_detailed_data = `/api/v1/getDetailedResults/${option}/2020`;
+        url_detailed_data = `/api/v1/getDetailedResults/${option}/${year}`;
         renderDetailedData(url_detailed_data);
-        url_role_data = `/api/v1/getRoleResults/${option}/2020`
+        url_role_data = `/api/v1/getRoleResults/${option}/${year}`
         renderRoleData(url_role_data);
-        url_data = `/api/v1/getAllResults/${option}/2020`
+        url_data = `/api/v1/getAllResults/${option}/${year}`
         renderYearlyData(url_data); 
     });
+
+    d3.select("#selYear").on("change",function(){
+        option = d3.select("#selMember").property("value");
+        member = option
+        year = d3.select("#selYear").property("value");
+        option = option.replace(" ","%20");
+        url_detailed_data = `/api/v1/getDetailedResults/${option}/${year}`;
+        renderDetailedData(url_detailed_data);
+        url_role_data = `/api/v1/getRoleResults/${option}/${year}`
+        renderRoleData(url_role_data);
+        url_data = `/api/v1/getAllResults/${option}/${year}`
+        renderYearlyData(url_data); 
+    });
+
 }
 
 // Function to render the table for monthly participations

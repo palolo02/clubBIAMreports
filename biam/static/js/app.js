@@ -1,9 +1,46 @@
 console.log('Loading data');
 
+var availableMonths = {}
+
 
 init();
 
 function init(){
+    
+    availableYears = [2020,2021];
+
+    availableMonths = 
+    [
+    /*{'year':2020,'month':'2020,01','text':'Ene 2020'},
+    {'year':2020,'month':'2020,02','text':'Feb 2020'},
+    {'year':2020,'month':'2020,03','text':'Mar 2020'},
+    */
+    {'year':2020,'month':'2020,04','text':'Abr 2020'},
+    {'year':2020,'month':'2020,05','text':'May 2020'},
+    {'year':2020,'month':'2020,06','text':'Jun 2020'},
+    {'year':2020,'month':'2020,07','text':'Jul 2020'},
+    //{'year':2020,'month':'2020,08','text':'Ago 2020'},
+    {'year':2020,'month':'2020,09','text':'Sep 2020'},
+    {'year':2020,'month':'2020,10','text':'Oct 2020'},
+    {'year':2020,'month':'2020,11','text':'Nov 2020'},
+    {'year':2020,'month':'2020,12','text':'Dic 2020'},
+    {'year':2021,'month':'2021,01','text':'Ene 2021'}]
+
+    // Load options for the Year selector
+    sel = d3.select("#selYear");
+    availableYears.forEach(function(o){
+        opt = sel.append("option")
+        opt.attr('value',o).text(o);
+    });
+    
+    // Load options for the Month selector
+    sel = d3.select("#selMonth");
+    availableMonths.forEach(function(o){
+        opt = sel.append("option")
+        opt.attr('value',o['month']).text(o['text']);
+    });
+    
+
     url_data = '/api/v1/getResultsPerDateRange/2020/04';
     rendertable(url_data);
     url_stats = '/api/v1/getStatsPerDateRange/2020/04';
@@ -13,13 +50,38 @@ function init(){
 
 function loadEvents(){
 
-    d3.select("#selMes").on("change",function(){
-        option = d3.select("#selMes").property("value");
+    d3.select("#selYear").on("change",function(){
+        
+        year = d3.select("#selYear").property("value");
+        // Load options for the Month selector
+        sel = d3.select("#selMonth");
+        sel.selectAll("option").remove();
+        availableMonths.filter(y => y["year"] == year).forEach(element => {
+            opt = sel.append("option")
+            opt.attr('value',element['month']).text(element['text']);
+        });
+
+        option = d3.select("#selMonth").property("value");
         parameters = option.split(',');
         var url = `/api/v1/getResultsPerDateRange/${parameters[0]}/${parameters[1]}`
+        console.log(url)
         d3.selectAll("tr").remove();
         rendertable(url);
         var url_stats = `/api/v1/getStatsPerDateRange/${parameters[0]}/${parameters[1]}`
+        console.log(url_stats)
+        renderStats(url_stats);    
+        
+    });
+
+    d3.select("#selMonth").on("change",function(){
+        option = d3.select("#selMonth").property("value");
+        parameters = option.split(',');
+        var url = `/api/v1/getResultsPerDateRange/${parameters[0]}/${parameters[1]}`
+        console.log(url)
+        d3.selectAll("tr").remove();
+        rendertable(url);
+        var url_stats = `/api/v1/getStatsPerDateRange/${parameters[0]}/${parameters[1]}`
+        console.log(url_stats)
         renderStats(url_stats);
     });
 }
