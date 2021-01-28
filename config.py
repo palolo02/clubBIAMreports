@@ -56,6 +56,7 @@ class ProdConfig(Config):
     usr = os.environ.get('USR')
     pwd = os.environ.get('PWD')
     SQLALCHEMY_DATABASE_URI = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    print(SQLALCHEMY_DATABASE_URI)
 
 
 # Variable to hold configuration environments
