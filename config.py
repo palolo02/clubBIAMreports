@@ -51,7 +51,7 @@ class ProdConfig(Config):
     # Set Flask configuration from file
     dialect = os.environ.get('DIALECT')
     host = os.environ.get('HOST')
-    port = os.environ.get('PORT')
+    port = os.environ.get('DB_PORT')
     db = os.environ.get('DB')
     usr = os.environ.get('USR')
     pwd = os.environ.get('PWD')
