@@ -49,13 +49,14 @@ class TestingConfig(Config):
 
 class ProdConfig(Config):
     # Set Flask configuration from file
-    dialect = os.environ.get('DIALECT')
-    host = os.environ.get('HOST')
-    port = os.environ.get('PORT')
+    dialect = os.environ.get('DB_DIALECT')
+    host = os.environ.get('DB_HOST')
+    port = os.environ.get('DB_PORT')
     db = os.environ.get('DB')
-    usr = os.environ.get('USR')
-    pwd = os.environ.get('PWD')
+    usr = os.environ.get('DB_USR')
+    pwd = os.environ.get('DB_PWD')
     SQLALCHEMY_DATABASE_URI = f'{dialect}://{usr}:{pwd}@{host}:{port}/{db}'
+    print(SQLALCHEMY_DATABASE_URI)
 
 
 # Variable to hold configuration environments
