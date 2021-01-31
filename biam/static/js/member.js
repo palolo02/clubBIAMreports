@@ -169,6 +169,7 @@ function renderRoleData(url){
             obj.push(temp)
         }
 
+
         noParticipaciones = obj.map(r => r['NoParticipaciones'])
         
         var dataRole = [
