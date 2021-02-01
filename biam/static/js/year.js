@@ -5,7 +5,7 @@ init();
 
 function init(){
     loadMemberEvent();
-    url_data = '/api/v1/getStatsPerYear/2020';
+    url_data = '/api/v1/getStatsPerYear/2021';
     renderTableYear(url_data);
     
     

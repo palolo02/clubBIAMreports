@@ -7,10 +7,11 @@ init();
 
 function init(){
     
-    availableYears = [2020,2021];
+    availableYears = [2021,2020];
 
     availableMonths = 
     [
+    {'year':2021,'month':'2021,01','text':'Ene 2021'},
     /*{'year':2020,'month':'2020,01','text':'Ene 2020'},
     {'year':2020,'month':'2020,02','text':'Feb 2020'},
     {'year':2020,'month':'2020,03','text':'Mar 2020'},
@@ -23,8 +24,8 @@ function init(){
     {'year':2020,'month':'2020,09','text':'Sep 2020'},
     {'year':2020,'month':'2020,10','text':'Oct 2020'},
     {'year':2020,'month':'2020,11','text':'Nov 2020'},
-    {'year':2020,'month':'2020,12','text':'Dic 2020'},
-    {'year':2021,'month':'2021,01','text':'Ene 2021'}]
+    {'year':2020,'month':'2020,12','text':'Dic 2020'}
+    ]
 
     // Load options for the Year selector
     sel = d3.select("#selYear");
@@ -41,9 +42,9 @@ function init(){
     });
     
 
-    url_data = '/api/v1/getResultsPerDateRange/2020/04';
+    url_data = '/api/v1/getResultsPerDateRange/2021/01';
     rendertable(url_data);
-    url_stats = '/api/v1/getStatsPerDateRange/2020/04';
+    url_stats = '/api/v1/getStatsPerDateRange/2021/01';
     renderStats(url_stats);
     loadEvents();
 }

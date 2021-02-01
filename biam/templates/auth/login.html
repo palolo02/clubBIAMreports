@@ -1,18 +1,30 @@
 {% extends "base.html" %}
 {% from 'bootstrap/form.html' import render_form %}
-
+{% from "bootstrap/form.html" import render_field %}
 
 {% block title %}BIAM - Login{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>Login</h1>
+<br >
+<br >
+<div class="row" >
+    <div class="col-3"></div>    
+    <div class="col-6 landing-page">
+        <br />
+        <div class="page-header text-center">
+            <h1>Dashboard BIAM</h1>
+        </div>
+        <br >
+        {{ render_form(form)}}
+        <br>
+        <p>Forgot your password? <a href="#">Click here to reset it</a>.</p>
+        <p>New user? <a href="#">Click here to register</a>.</p>
+    </div>
+    <div class="col-3"></div>    
 </div>
-<div class="col-md-4">
-    {{ render_form(form) }}
-    <br>
-    <p>Forgot your password? <a href="">Click here to reset it</a>.</p>
-    <p>New user? <a href="">Click here to register</a>.</p>
+<script>
+    $('body')[0].style.backgroundColor = "#00274b";
+    $('body')[0].style.color = "white";
+</script>
 
-</div>
 {% endblock %}
