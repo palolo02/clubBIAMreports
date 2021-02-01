@@ -5,9 +5,9 @@ init();
 
 function init(){
     url_data = '/api/v1/getStatsPerClub/2020';
-    renderTableClub(url_data);
+    //renderTableClub(url_data);
     url_data_session_type = '/api/v1/getStatsPerSessionType/2020';
-    renderTableSessionType(url_data_session_type);
+    //renderTableSessionType(url_data_session_type);
     
 }
 

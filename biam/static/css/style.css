@@ -91,7 +91,7 @@
 .b25 { background-color: #47BFFF; color:black}
 .b0 { background-color: #99DBFF; color:black}
 
-/* Red
+/* Red 
 .b100 { background-color: #EF6351; color:black}
 .b75 { background-color: #F38375; color:black}
 .b50 { background-color: #F7A399; color:black}
@@ -121,3 +121,11 @@ th {
 }
 
 .row { margin: 0; padding: 0 }
+
+/* ============ Styles for Login =================== */
+
+
+.landing-page{
+  background-color:white !important;
+  color: #00274B;
+}
