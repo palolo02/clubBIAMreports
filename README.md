@@ -15,20 +15,21 @@ This project started in 2020, but it is still under constant development.
 ## Architecture
 The following diagram shows the general architecture of this project.
 
-![plot](./static/images/Biam_Dashboard_Arquitecture.png)
+![Alt text](./static/images/Biam_Dashboard_Arquitecture.png?raw=true "Club BIAM Dashboard Architecture")
+
 
 ## Screenshots
 
-![plot](./static/images/Biam_Dashboard_0.png)
+![Alt text](./static/images/Biam_Dashboard_0.png?raw=true "Login page")
 Figure 1.1 Login page. This only gives access to the current board members of the club
 
-![plot](./static/images/Biam_Dashboard_1.png)
+![Alt text](./static/images/Biam_Dashboard_1.png?raw=true "Anual participations per member in the club")
 Figure 1.2 Anual participations per member in the club
 
-![plot](./static/images/Biam_Dashboard_2.png)
+![Alt text](./static/images/Biam_Dashboard_2.png?raw=true "Monthly participations per member in the club")
 Figure 1.3 Monthly participations per member in the club
 
-![plot](./static/images/Biam_Dashboard_3.png)
+![Alt text](./static/images/Biam_Dashboard_3.png?raw=true "Detailed participations per member in the club")
 Figure 1.4 Detailed participations per member in the club
 
 ## Technologies
