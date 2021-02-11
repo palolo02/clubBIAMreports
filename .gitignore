@@ -1,7 +1,8 @@
 .vscode*
 biam/__pycache__/*
-__pycache*
+__pycache__*
 tests/__pycache__/*
 config.py
 biam_env/*
-.ipynb_che*
+ETL*
+Datasource/*

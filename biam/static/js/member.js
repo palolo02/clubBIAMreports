@@ -1,27 +1,37 @@
+/*
+Author: Paolo Vega
+Last Update: Feb 10, 2021
+Change: Add comments to functions 
+Version: 1.0.5
+*/
 
+
+// Retrieve currently active members
 loadMembers();
 
-// Stack bars colors
-//var colors = ['#722431','#317224','#243172']
+// General options for graphs
 var colors = ['#004468','#008190','#00AF8E']
 var chooseColor = 0;
 var member;
 var year;
 
+/*
+Function: loadMembers
+Objective: Get all the active members in a specific year
+Parameters: None
+Remarks: Currently, we need to specify the year to load members (2021)
+*/
 function loadMembers(){
-    var url = `/api/v1/getActiveMembers/2020`;
+    var url = `/api/v1/getActiveMembers/2021`;
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
-        
         // Get keys and values from dataframe
         keys = d3.keys(schema)        
         values = d3.values(schema)
         // Get only values from result        
         values = values.map(d => d3.values(d))
-        //console.log(values[1])
         values[1].forEach(function(v){
-            //console.log(v);
             d3.select("#selMember").append("option").attr('value',v).text(v)
         });
         //Initialize components
@@ -29,32 +39,46 @@ function loadMembers(){
     });
 }
 
-// Function to initialize graphs on webpage
+/*
+Function: init
+Objective: Call all the API requests to render the graphs in the page
+Parameters: None
+*/
 function init(){
+    // Get current memeber selection
     option = d3.select("#selMember").property("value");
+    // To display member selection in graphs
     member = option
+    // Get current year selection
     year = d3.select("#selYear").property("value");
     option = option.replace(" ","%20")
+    // Define API requests
     url_detailed_data = `/api/v1/getDetailedResults/${option}/${year}`;
     url_role_data = `/api/v1/getRoleResults/${option}/${year}`
     url_data = `/api/v1/getAllResults/${option}/${year}`
-    
+    // Call and render their content
     renderDetailedData(url_detailed_data);
     renderYearlyData(url_data);
     renderRoleData(url_role_data);
-
+    // Adds a filter selection listener when the user changes his selection
     loadMemberEvent()
 
 }
 
-// Function to attach a listener event when the dropdown selection changes
+/*
+Function: loadMemberEvent
+Objective: Detect user selection filters on webpage
+Parameters: None
+*/
 function loadMemberEvent(){
-
+    // Event listener in member selection
     d3.select("#selMember").on("change",function(){
         option = d3.select("#selMember").property("value");
+        // To display member selection in graphs
         member = option
         year = d3.select("#selYear").property("value");
         option = option.replace(" ","%20");
+        // Set parameters in API requests
         url_detailed_data = `/api/v1/getDetailedResults/${option}/${year}`;
         renderDetailedData(url_detailed_data);
         url_role_data = `/api/v1/getRoleResults/${option}/${year}`
@@ -62,11 +86,13 @@ function loadMemberEvent(){
         url_data = `/api/v1/getAllResults/${option}/${year}`
         renderYearlyData(url_data); 
     });
-
+    // Event listener in year selection
     d3.select("#selYear").on("change",function(){
         option = d3.select("#selMember").property("value");
+        // To display year selection in graphs
         member = option
         year = d3.select("#selYear").property("value");
+        // Set parameters in API requests
         option = option.replace(" ","%20");
         url_detailed_data = `/api/v1/getDetailedResults/${option}/${year}`;
         renderDetailedData(url_detailed_data);
@@ -78,22 +104,22 @@ function loadMemberEvent(){
 
 }
 
-// Function to render the table for monthly participations
-// parameters: URL => API call with parameters to retrieve data from JSON
+/*
+Function: renderDetailedData
+Objective: Renders the heat map of yearly member participations in the club
+Parameters: API URL
+*/
 function renderDetailedData(url){
 
-    // Read data from Flask
+    // Read data from request
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
-        
         // Get keys and values from dataframe
         keys = d3.keys(schema)        
         values = d3.values(schema)
-        
         // Get only values from result        
         values = values.map(d => d3.values(d))
-
         // Create an iterable object with all properties from JSON
         obj = []
         for(i=0; i<values[0].length;i++){
@@ -107,14 +133,14 @@ function renderDetailedData(url){
         // Get table element to render data
         var tableData = d3.select(".data");
         d3.select("#table_results table").classed("table-biam", true)
-        // Remove all content from table
+        // Remove all content from table (if any)
         tableData.selectAll("*").remove()
         d3.select(".header").selectAll("*").remove()
 
         // Add headers in HTML table
         header = tableData.append("tr")
         Object.entries(obj[0]).forEach(([key, value]) => {
-            // Replace month numbers per names
+            // Replace month numbers with names
             if(key.includes("."))
                 header.append("th").text(`${getMonthName(parseInt(key))}`)
             else
@@ -124,13 +150,18 @@ function renderDetailedData(url){
         // Add rows in HTML table
         obj.forEach(function(row){
             trow = tableData.append("tr");
+            // For each row, evaluate if it's going to show any text or number to add a formatting class
             Object.entries(row).forEach(([key, value]) => {
+                //Empty content
                 if(value == null || value == 0)
                     trow.append("td").text('')
+                // Text
                 else if (key == 'Rol' || key == 'TipoRol')
                     trow.append("td").text(`${value}`).classed('name',true)
+                // Gray total
                 else if (key == 'Total')
                     trow.append("td").classed('total',true).text(`${value}`)
+                // Number with color gradient
                 else{
                     classHeatMap = getHeatMapClassMember(value)
                     trow.append("td").classed(classHeatMap,true).text(`${value}`)
@@ -144,22 +175,23 @@ function renderDetailedData(url){
 
 }
 
-// Function to render the montly participations per Role in session
-// parameters: URL => API call with parameters to retrieve data from JSON
+/*
+Function: renderRoleData
+Objective: Renders total yearly member participations per role as a bar chart
+Parameters: API URL
+*/
 function renderRoleData(url){
 
-    // Read stats from Flask
+    // Read stats from request
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
-        //console.log(schema)       
         // Get keys and values from dataframe
         keys = d3.keys(schema)
         values = d3.values(schema)
         // Get only values from result
-        
         values = values.map(d => d3.values(d))
-
+        // Create an iterable object with all properties from JSON
         obj = []
         for(i=0; i<values[0].length;i++){
             temp = {}
@@ -168,10 +200,9 @@ function renderRoleData(url){
             }
             obj.push(temp)
         }
-
-
+        //Get number of participations
         noParticipaciones = obj.map(r => r['NoParticipaciones'])
-        
+        // Create bar chart with percentages and labels
         var dataRole = [
             {
                 x: obj.map(r => r['Perc']),
@@ -194,16 +225,13 @@ function renderRoleData(url){
                 */
               }
         ]
-          
+        // Define data layout for formatting details
         var layoutRole = {
-            //barmode: 'bar',
-            //title:'Participaciones por Tipo de Rol',
             xaxis:{
                 visible:false
             },
             yaxis:{
                 showgrid: false,
-                //showline: false,
                 automargin: true,
                 tickfont: {
                     family: 'Old Standard TT, serif',
@@ -250,28 +278,29 @@ function renderRoleData(url){
                 pad:0
             }            
         };
-          
+        // Create final graph with data and formatting layout
         Plotly.newPlot('role', dataRole, layoutRole, {displayModeBar: false}, {responsive: true});
     }); 
 
 }
 
-// Function to render the montly participations for the entire year
-// parameters: URL => API call with parameters to retrieve data from JSON
+/*
+Function: renderYearlyData
+Objective: Renders total yearly participations as a line chart
+Parameters: API URL
+*/
 function renderYearlyData(url){
 
     // Read stats from Flask
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
-        //console.log(schema)
-        //console.log(schema)       
         // Get keys and values from dataframe
         keys = d3.keys(schema)
         values = d3.values(schema)
         // Get only values from result
         values = values.map(d => d3.values(d))
-
+        // Create an iterable object with all properties from JSON
         var results = []
         for(i=0; i<values[0].length;i++){
             temp = {}
@@ -280,32 +309,23 @@ function renderYearlyData(url){
             }
             results.push(temp)
         }
-
+        // Define data for line graph
         var traceLineTable = {
             x: getMonths(results.map(r => r['Mes'])),
             y: results.map(r => r['NoParticipaciones']),
             // Enable data values on graph
             text: results.map(r => r['NoParticipaciones']),
-            //textposition: 'top',
-            //mode: 'lines+markers+text',
             mode: 'lines',
             name: '',
             type: 'scatter',
             hovertemplate: '<b>Participaciones</b>: %{y:}' +
                         '<br><b>Mes</b>: %{x}<br>'
-            /*hovertemplate: '<i>Participaciones</i>: $%{y:.2f}' +
-            '<br><b>Mes</b>: %{x}<br>' +
-            '<b>%{text}</b>'
-            */
         };
         
         var dataPoints = [traceLineTable];
-
+        // Define layout for line chart
         var layoutTable = {
-            //title:'Asistencias en el año',
             hovermode: true,
-            
-            //hoverinfo: 'skip',
             xaxis:{
                 title:"", 
                 showgrid: false,
@@ -314,7 +334,6 @@ function renderYearlyData(url){
                     size: 12,
                     color: 'gray'
                 }
-                
             },
             yaxis:{
                 autotick: true,
@@ -361,7 +380,7 @@ function renderYearlyData(url){
                 }
             ]
         };
-          
+        // Create line chart with data and formatting details
         Plotly.newPlot('yearly', dataPoints, layoutTable, {displayModeBar: false}, {responsive: true});
         
     }); 
