@@ -1,5 +1,7 @@
-.vscode/settings.json
-*.pyc
-*pycache*.pyc
+.vscode*
+biam/__pycache__/*
+__pycache*
+tests/__pycache__/*
 config.py
 biam_env/*
+.ipynb_che*
