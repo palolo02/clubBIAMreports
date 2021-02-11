@@ -1,4 +1,10 @@
-console.log('Loading data for year');
+/*
+Author: Paolo Vega
+Last Update: Feb 10, 2021
+Change: Add comments to functions 
+Stataus: Pending
+Version: 1.0.5
+*/
 
 
 init();
