@@ -9,6 +9,13 @@
             {{ render_nav_item('main.home', 'Mensual') }}
             {{ render_nav_item('main.member', 'Socio') }}
         </div>
+        <div class="nav navbar-nav navbar-center">
+            <span class="nav-link">
+                {% if session['lastClubSession'] != 'Error' %}
+                    Última actualización: {{ session['lastClubSession']}}
+                {% endif %}
+            </span>
+        </div>
         <div class="nav navbar-nav navbar-right">
             <span>
                 {% if current_user.is_authenticated %}
