@@ -129,3 +129,10 @@ th {
   background-color:white !important;
   color: #00274B;
 }
+
+
+.pad-right{
+  margin-right: 30px;
+  font-size: small;
+  color: darkgray;
+}

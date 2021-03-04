@@ -230,3 +230,20 @@ def getActiveMembers(_year, db_):
         # There are no results
         results = pd.DataFrame({'error':'No results'}, index=[0])
     return results
+
+
+# Get last club session in db
+def getLastSession(db_):
+    last_club_session = ''
+    months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+    try:
+        rs = db_.engine.execute(f'Select MAX(s.session_dt) as session_dt from public."Session" s ')
+        for row in rs:
+            last_club_session = str(row[0])
+        # Process the date in format 'dd-mm-yyy' (spanish)
+        res = last_club_session.split('-',3)
+        last_club_session = f'{res[2]} de {months[int(res[1])-1]} de {res[0]}'
+    except KeyError:
+        # There are no results
+        last_club_session = 'Error'
+    return last_club_session
