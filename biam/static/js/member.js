@@ -22,7 +22,7 @@ Parameters: None
 Remarks: Currently, we need to specify the year to load members (2021)
 */
 function loadMembers(){
-    var url = `/api/v1/getActiveMembers/2020`;
+    var url = `/api/v1/getActiveMembers/2021`;
     d3.json(url).then((incomingData) =>{
         //Parse JSON result
         schema = JSON.parse(incomingData)
