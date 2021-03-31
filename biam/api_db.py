@@ -217,7 +217,7 @@ def getStatsPerSessionType(year_,db_):
 # Display only members with at least 1 participation
 def getActiveMembers(_year, db_):
     try:
-        rs = db_.engine.execute(f'Select m.member_desc, count(*) as participations from public."Session" s JOIN public."Member" m  ON m.member_id = s.member_id where (Extract(Year from session_dt)) = {_year} and "isGuest" = FALSE group by m.member_desc having count(*) > 1 order by m.member_desc')
+        rs = db_.engine.execute(f'Select m.member_desc, count(*) as participations from public."Session" s JOIN public."Member" m  ON m.member_id = s.member_id where (Extract(Year from session_dt)) = {_year} and "isGuest" = FALSE group by m.member_desc having count(*) > 0 order by m.member_desc')
         dicts = []
         for row in rs:
             d = {}
